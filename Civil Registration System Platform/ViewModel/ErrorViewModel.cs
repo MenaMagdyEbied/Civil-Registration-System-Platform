@@ -1,4 +1,4 @@
-namespace Civil_Registration_System_Platform.Models
+namespace Civil_Registration_System_Platform.ViewModel
 {
     public class ErrorViewModel
     {
