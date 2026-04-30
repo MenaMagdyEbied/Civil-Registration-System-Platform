@@ -9,6 +9,10 @@ namespace Civil_Registration_System_Platform
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            // connction string
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -24,11 +28,11 @@ namespace Civil_Registration_System_Platform
 
             app.UseAuthorization();
 
-            app.MapStaticAssets();
+            // app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+             //   .WithStaticAssets();
 
             app.Run();
         }
