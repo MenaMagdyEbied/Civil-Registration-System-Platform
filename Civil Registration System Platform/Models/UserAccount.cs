@@ -17,12 +17,18 @@ namespace Civil_Registration_System_Platform.Models
         public bool IsConfirmed { get; set; }
         public string CardImagePath { get; set; }
 
+        public DateOnly CreatedAt { get; set; }
 
-        public int GovernorateId { get; set; }        
-        public Governorate Governorate { get; set; } // [ForeignKey("GovernorateId")]  
 
-        public int OfficeId { get; set; }       
-        public Office Office { get; set; } //  [ForeignKey("OfficeId")] 
+        public bool IsRejected { get; set; } 
+        public string? RejectionMessage { get; set; }
+
+
+        public int? GovernorateId { get; set; }        
+        public Governorate? Governorate { get; set; } // [ForeignKey("GovernorateId")]  
+
+        public int? OfficeId { get; set; }       
+        public Office? Office { get; set; } //  [ForeignKey("OfficeId")] 
 
          
         public int? ManageOfficeId { get; set; }        

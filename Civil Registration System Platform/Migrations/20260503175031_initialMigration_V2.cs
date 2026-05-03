@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Civil_Registration_System_Platform.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigaraion : Migration
+    public partial class initialMigration_V2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -125,8 +127,11 @@ namespace Civil_Registration_System_Platform.Migrations
                     MaritalStatus = table.Column<int>(type: "int", nullable: false),
                     IsConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     CardImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GovernorateId = table.Column<int>(type: "int", nullable: false),
-                    OfficeId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsRejected = table.Column<bool>(type: "bit", nullable: false),
+                    RejectionMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GovernorateId = table.Column<int>(type: "int", nullable: true),
+                    OfficeId = table.Column<int>(type: "int", nullable: true),
                     ManageOfficeId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -379,6 +384,27 @@ namespace Civil_Registration_System_Platform.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "1", null, "SuperAdmin", "SUPERADMIN" },
+                    { "2", null, "Admin", "ADMIN" },
+                    { "3", null, "Employee", "EMPLOYEE" },
+                    { "4", null, "User", "USER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "CardImagePath", "ConcurrencyStamp", "CreatedAt", "EGPhoneNumber", "Email", "EmailConfirmed", "FullName", "Gender", "GovernorateId", "IsConfirmed", "IsRejected", "LockoutEnabled", "LockoutEnd", "ManageOfficeId", "MaritalStatus", "NationalID", "NormalizedEmail", "NormalizedUserName", "OfficeId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RejectionMessage", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "1", 0, "default.png", "da0121aa-eb52-4731-acd5-b190c4e8f96e", new DateOnly(2026, 5, 3), "01000000000", "superadmin@gmail.com", true, "Super Admin", 1, null, true, false, false, null, null, 1, "12345678901234", "SUPERADMIN@GMAIL.COM", "SUPERADMIN", null, "AQAAAAIAAYagAAAAEMRHMYIapqMBOpA0t3mCK6GSu0oVblp874gBi4ij37t5/PNAs5dz9GUZ1q7ODG5JjA==", null, false, null, "bfd66b21-3f6c-49bd-9950-40c79279449b", false, "superadmin" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "1", "1" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationDocuments_ApplicationId",
