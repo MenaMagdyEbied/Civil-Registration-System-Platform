@@ -17,6 +17,9 @@ namespace Civil_Registration_System_Platform.Relation_Constraint_Configration
                 entity.HasIndex(e=>e.Email).IsUnique();
                 entity.HasIndex(u => u.UserName).IsUnique();
 
+                entity.Property(u => u.CreatedAt)
+                    .HasDefaultValueSql("GETDATE()");   
+
                 // User -> Governorate
                 entity.HasOne(u => u.Governorate)
                     .WithMany(g => g.UserAccounts)

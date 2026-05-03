@@ -6,8 +6,13 @@ namespace Civil_Registration_System_Platform.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IAccountServices accountServices;
+        public HomeController(IAccountServices accountServices)
         {
+            this.accountServices = accountServices;
+        }
+        public IActionResult Index()
+        {     
             return View();
         }
 

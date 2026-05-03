@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Civil_Registration_System_Platform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260430182630_initialMigaraion")]
-    partial class initialMigaraion
+    [Migration("20260503175031_initialMigration_V2")]
+    partial class initialMigration_V2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -338,6 +338,11 @@ namespace Civil_Registration_System_Platform.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateOnly>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasDefaultValueSql("GETDATE()");
+
                     b.Property<string>("EGPhoneNumber")
                         .IsRequired()
                         .HasMaxLength(11)
@@ -358,10 +363,13 @@ namespace Civil_Registration_System_Platform.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<int>("GovernorateId")
+                    b.Property<int?>("GovernorateId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRejected")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -389,7 +397,7 @@ namespace Civil_Registration_System_Platform.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("OfficeId")
+                    b.Property<int?>("OfficeId")
                         .HasColumnType("int");
 
                     b.Property<string>("PasswordHash")
@@ -400,6 +408,9 @@ namespace Civil_Registration_System_Platform.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("RejectionMessage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -439,6 +450,33 @@ namespace Civil_Registration_System_Platform.Migrations
                         .HasFilter("[UserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            CardImagePath = "default.png",
+                            ConcurrencyStamp = "da0121aa-eb52-4731-acd5-b190c4e8f96e",
+                            CreatedAt = new DateOnly(2026, 5, 3),
+                            EGPhoneNumber = "01000000000",
+                            Email = "superadmin@gmail.com",
+                            EmailConfirmed = true,
+                            FullName = "Super Admin",
+                            Gender = 1,
+                            IsConfirmed = true,
+                            IsRejected = false,
+                            LockoutEnabled = false,
+                            MaritalStatus = 1,
+                            NationalID = "12345678901234",
+                            NormalizedEmail = "SUPERADMIN@GMAIL.COM",
+                            NormalizedUserName = "SUPERADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMRHMYIapqMBOpA0t3mCK6GSu0oVblp874gBi4ij37t5/PNAs5dz9GUZ1q7ODG5JjA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "bfd66b21-3f6c-49bd-9950-40c79279449b",
+                            TwoFactorEnabled = false,
+                            UserName = "superadmin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -466,6 +504,32 @@ namespace Civil_Registration_System_Platform.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            Name = "Employee",
+                            NormalizedName = "EMPLOYEE"
+                        },
+                        new
+                        {
+                            Id = "4",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -553,6 +617,13 @@ namespace Civil_Registration_System_Platform.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "1"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -665,8 +736,7 @@ namespace Civil_Registration_System_Platform.Migrations
                     b.HasOne("Civil_Registration_System_Platform.Models.Governorate", "Governorate")
                         .WithMany("UserAccounts")
                         .HasForeignKey("GovernorateId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Civil_Registration_System_Platform.Models.Office", "ManageOffice")
                         .WithMany("ManageUserAccounts")
@@ -676,8 +746,7 @@ namespace Civil_Registration_System_Platform.Migrations
                     b.HasOne("Civil_Registration_System_Platform.Models.Office", "Office")
                         .WithMany("UserAccounts")
                         .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Governorate");
 
