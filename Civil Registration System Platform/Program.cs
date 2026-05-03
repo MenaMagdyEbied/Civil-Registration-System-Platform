@@ -4,9 +4,6 @@ using Civil_Registration_System_Platform.Services.Implementations;
 using Civil_Registration_System_Platform.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-
-using Microsoft.AspNetCore.Identity;
-
 namespace Civil_Registration_System_Platform
 {
     public class Program
@@ -15,7 +12,12 @@ namespace Civil_Registration_System_Platform
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //Global
+            builder.Services.AddScoped<IUserGlobalServices, UserGlobalServices>();
+
+
             // Repositories
+            builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();// account
             builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
             builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
             builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
@@ -30,7 +32,10 @@ namespace Civil_Registration_System_Platform
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<IApplicationService, ApplicationService>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-
+            builder.Services.AddScoped<IGovernorateServices, GovernorateServices>();
+            builder.Services.AddScoped<IOfficeServices, OfficeServices>();
+            builder.Services.AddScoped<IAccountServices, AccountServices>();
+            builder.Services.AddScoped<IAcccountManageServices, AcccountManageServices>();
 
             builder.Services.AddHttpContextAccessor();
             // Add services to the container.
@@ -43,14 +48,6 @@ namespace Civil_Registration_System_Platform
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-
-            builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
-
-
-            builder.Services.AddScoped<IUserGlobalServices, UserGlobalServices>();
-
-            builder.Services.AddScoped<IAccountServices, AccountServices>();  
-            builder.Services.AddScoped<IAcccountManageServices, AcccountManageServices>();
 
             var app = builder.Build();
 
