@@ -1,3 +1,8 @@
+using Civil_Registration_System_Platform.Repositories.Implementations;
+using Civil_Registration_System_Platform.Repositories.Interfaces;
+using Civil_Registration_System_Platform.Services.Implementations;
+using Civil_Registration_System_Platform.Services.Interfaces;
+
 namespace Civil_Registration_System_Platform
 {
     public class Program
@@ -5,6 +10,22 @@ namespace Civil_Registration_System_Platform
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Repositories
+            builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
+            builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
+            builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
+            builder.Services.AddScoped<IApplicationDocumentRepository, ApplicationDocumentRepository>();
+            builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            builder.Services.AddScoped<ITimelineEntryRepository, TimelineEntryRepository>();
+            builder.Services.AddScoped<IServicesTypeHelperRepository, ServicesTypeHelperRepository>();
+            builder.Services.AddScoped<IApplicationTypeHelperRepository, ApplicationTypeHelperRepository>();
+
+            // Services
+            builder.Services.AddScoped<IPricingService, PricingService>();
+            builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IApplicationService, ApplicationService>();
+            builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -43,11 +64,3 @@ namespace Civil_Registration_System_Platform
 
 
 
-
-
-
-
-
-
-
-//hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
