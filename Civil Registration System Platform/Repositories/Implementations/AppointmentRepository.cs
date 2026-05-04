@@ -13,13 +13,15 @@ namespace Civil_Registration_System_Platform.Repositories.Implementations
                 .FirstOrDefaultAsync(a => a.ApplicationId == applicationId && !a.IsDeleted);
 
         public async Task<IEnumerable<Appointment>> GetByOfficeAndDateAsync(int officeId, DateTime date)
-     => await _context.Appointments
-         .Where(a => a.Application.OfficeId == officeId
-                  && !a.IsDeleted
-                  && a.AppointmentDate.Date == date.Date)
-         .Include(a => a.Application)
-             .ThenInclude(app => app.UserAccount)
-         .ToListAsync();
+        {
+            return await _context.Appointments
+                .Include(a => a.Application)
+                    .ThenInclude(app => app.UserAccount)
+                .Where(a => a.Application.OfficeId == officeId
+                         && !a.IsDeleted
+                         && a.AppointmentDate.Date == date.Date)
+                .ToListAsync();
+        }
 
         public async Task<IEnumerable<Appointment>> GetUpcomingByUserIdAsync(string userId)
             => await _context.Appointments
