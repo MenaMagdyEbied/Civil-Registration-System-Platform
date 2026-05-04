@@ -5,5 +5,7 @@
         Task<List<UserAccount>> GetUnConfirmedUserAsync();
         Task<UserAccount> GetById(string userId);   
         Task<UserAccount> SaveUser(UserAccount userAccount);
+        Task<UserAccount> GetMyAccount();
+
     }
 }

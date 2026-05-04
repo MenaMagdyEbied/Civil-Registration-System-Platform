@@ -14,12 +14,14 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
     {
         private readonly UserManager<UserAccount> _userManager;
         private readonly SignInManager<UserAccount> _signInManager;
+        private readonly IUserAccountRepository _userAccountRepository;
         private readonly IWebHostEnvironment _env;
 
-        public AccountServices(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager , IWebHostEnvironment env)
+        public AccountServices(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager , IUserAccountRepository userAccountRepository, IWebHostEnvironment env)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userAccountRepository = userAccountRepository; 
             _env = env;
         }
 
@@ -36,7 +38,7 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
                 MaritalStatus = registerViewModel.MaritalStatus,
                 GovernorateId = registerViewModel.GovernorateId,
                 OfficeId = registerViewModel.OfficeId,
-                IsConfirmed = false 
+                IsConfirmed = false
             };
             await _userManager.AddToRoleAsync(userAccount, "User");
             userAccount = await CreateUserImage(registerViewModel.CardImage, userAccount);
@@ -148,11 +150,100 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
 
 
 
+        public async Task<GetMyAccount> GetMyAccount()
+        {
+            UserAccount userAccount = await _userAccountRepository.GetMyAccount();
+
+            GetMyAccount getMyAccount = new GetMyAccount
+            {
+                UserId = userAccount.Id,
+                FullName = userAccount.FullName,
+                EGPhoneNumber = userAccount.EGPhoneNumber,
+                NationalID = userAccount.NationalID,
+                Email = userAccount.Email,
+                CardImagePath = userAccount.CardImagePath,
+                Gender = userAccount.Gender,
+                MaritalStatus = userAccount.MaritalStatus,
+                IsConfirmed = userAccount.IsConfirmed,
+                CreatedAt = userAccount.CreatedAt,
+                IsRejected = userAccount.IsRejected,
+                RejectionMessage = userAccount.RejectionMessage,
+                GovernorateName = userAccount.Governorate.Name,
+                OfficeName = userAccount.Office.Name
+            };
+
+            return getMyAccount;
+        }
+
+
+
+
+        public async Task<string> EditMyAccount(UserAccountEdit userAccountEdit)
+        {
+            UserAccount userAccount = await _userAccountRepository.GetMyAccount();
+
+            userAccount.FullName = userAccountEdit.FullName;    
+            userAccount.EGPhoneNumber = userAccountEdit.EGPhoneNumber;
+            userAccount.NationalID = userAccountEdit.NationalID;
+            userAccount.Gender = userAccountEdit.Gender;
+            userAccount.MaritalStatus = userAccountEdit.MaritalStatus;
+            userAccount.GovernorateId = userAccountEdit.GovernorateId;
+            userAccount.OfficeId = userAccountEdit.OfficeId;
+
+            await _userManager.SetEmailAsync(userAccount, userAccountEdit.Email);
+
+            // deleting old image   
+            try
+            {
+                await DeleteImg(userAccount);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception( $"Error deleting old image: {ex.Message}");
+            }
+            userAccount = await CreateUserImage(userAccountEdit.CardImage, userAccount);
+
+
+            userAccount.IsRejected = false; 
+            userAccount.RejectionMessage = null;
+
+            await _userAccountRepository.SaveUser(userAccount); 
+            return "Account Updated Successfully";
+        }
+
+
+
+
+
+
+
+
+        private async Task<bool> DeleteImg(UserAccount user)
+        {
+            if (user.CardImagePath == null)
+                return false;
+             
+            string fullPath = Path.Combine(
+                _env.WebRootPath,
+                "AccountCardImages",
+                Path.GetFileName(user.CardImagePath)
+            );
+
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
+
+            user.CardImagePath = null;
+
+            await _userAccountRepository.SaveUser(user);
+            return true;
+        }
 
 
         // creating image 
 
-        
+
         public async Task<UserAccount> CreateUserImage(IFormFile cardImg, UserAccount userAccount)
         {
             string ext = Checking(cardImg);
