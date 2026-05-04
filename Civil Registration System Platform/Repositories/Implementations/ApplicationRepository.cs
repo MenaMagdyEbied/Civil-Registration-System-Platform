@@ -8,12 +8,14 @@ namespace Civil_Registration_System_Platform.Repositories.Implementations
         public ApplicationRepository(AppDbContext context) : base(context) { }
 
         public async Task<Application?> GetByApplicationNumberAsync(string applicationNumber)
-            => await _context.Applications
+        {
+            return await _context.Applications
                 .Include(a => a.TimelineEntries.OrderBy(t => t.Timestamp))
+                .ThenInclude(t => t.PerformedBy) 
                 .Include(a => a.UserAccount)
                 .Include(a => a.Office)
-                .FirstOrDefaultAsync(a => a.ApplicationNumber == applicationNumber
-                                       && !a.IsDeleted);
+                .FirstOrDefaultAsync(a => a.ApplicationNumber == applicationNumber && !a.IsDeleted);
+        }
 
         public async Task<Application?> GetWithFullDetailsAsync(int applicationId)
             => await _context.Applications
