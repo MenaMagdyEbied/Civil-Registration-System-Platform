@@ -1,4 +1,5 @@
 ﻿using Civil_Registration_System_Platform.GlobalServices.GlobalInterface;
+using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
 namespace Civil_Registration_System_Platform.Account.AccountRepository
@@ -6,11 +7,13 @@ namespace Civil_Registration_System_Platform.Account.AccountRepository
     public class UserAccountRepository : IUserAccountRepository
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<UserAccount> _userManager; 
         private readonly IUserGlobalServices _userGlobalServices;   
-        public UserAccountRepository(AppDbContext context , IUserGlobalServices userGlobalServices)
+        public UserAccountRepository(AppDbContext context , IUserGlobalServices userGlobalServices, UserManager<UserAccount> userManager)
         {
             _context = context; 
             _userGlobalServices = userGlobalServices;
+            _userManager = userManager;
         }
 
         public async Task<List<UserAccount>> GetUnConfirmedUserAsync()
@@ -36,10 +39,21 @@ namespace Civil_Registration_System_Platform.Account.AccountRepository
         }
         public async Task<UserAccount> SaveUser(UserAccount userAccount)
         {
-            _context.UserAccounts.Update(userAccount);
-            await _context.SaveChangesAsync();
-            return userAccount; 
+
+            var result = await _userManager.UpdateAsync(userAccount);
+
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+
+            return userAccount;
         }
 
+        public async Task<UserAccount> GetMyAccount()
+        {
+            UserAccount userLogin = await _userGlobalServices.GetUser();
+            return userLogin;
+        }
     }
 }

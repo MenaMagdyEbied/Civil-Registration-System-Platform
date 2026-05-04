@@ -27,8 +27,8 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
                     CardImagePath = userAccount.CardImagePath,  
                     Gender = userAccount.Gender,
                     MaritalStatus = userAccount.MaritalStatus,      
-                    GovernorateId = (int)userAccount.GovernorateId,
-                    OfficeId = (int)userAccount.OfficeId ,
+                    GovernorateName = userAccount.Governorate.Name,
+                    OfficeName = userAccount.Office.Name ,
                     CreatedAt = userAccount.CreatedAt
                 });
             }
@@ -62,5 +62,7 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
 
             return "Rejected successfully";
         }
+
+        
     }
 }

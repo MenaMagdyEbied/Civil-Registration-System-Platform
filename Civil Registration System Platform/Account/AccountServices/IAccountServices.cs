@@ -9,5 +9,9 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
         Task<string> RegisterAdminAsync(RegisterAdminOrEmployeeViewModel registerEmployeeViewModel);
         Task<string> LoginUserAsync(LoginViewModel loginViewModel);
 
+
+        //new must user created account and login to get his account information
+        Task<GetMyAccount> GetMyAccount(); 
+        Task<string> EditMyAccount(UserAccountEdit userAccountEdit); 
     }
 }
