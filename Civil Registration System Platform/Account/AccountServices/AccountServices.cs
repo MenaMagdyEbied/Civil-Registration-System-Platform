@@ -40,13 +40,13 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
                 OfficeId = registerViewModel.OfficeId,
                 IsConfirmed = false
             };
-            await _userManager.AddToRoleAsync(userAccount, "User");
             userAccount = await CreateUserImage(registerViewModel.CardImage, userAccount);
 
             IdentityResult result = await _userManager.CreateAsync(userAccount, registerViewModel.PassWord);
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(userAccount, "User");
                 return "User Registered Successfully";
             }
             else
@@ -76,12 +76,12 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
                 ManageOfficeId = registerEmployeeViewModel.ManagerOfficeId,
                 IsConfirmed = true  
             };
-            await _userManager.AddToRoleAsync(userAccount, "Employee");
             userAccount = await CreateUserImage(registerEmployeeViewModel.CardImage, userAccount);
             IdentityResult result = await _userManager.CreateAsync(userAccount, registerEmployeeViewModel.PassWord);
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(userAccount, "Employee");
                 return "Employee Registered Successfully";
             }
             else
@@ -112,12 +112,13 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
                 ManageOfficeId = registerAdminViewModel.ManagerOfficeId,
                 IsConfirmed = true
             };
-            await _userManager.AddToRoleAsync(userAccount, "Admin");
+            
             userAccount = await CreateUserImage(registerAdminViewModel.CardImage, userAccount);
             IdentityResult result = await _userManager.CreateAsync(userAccount, registerAdminViewModel.PassWord);
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(userAccount, "Admin");
                 return "Admin Registered Successfully";
             }
             else

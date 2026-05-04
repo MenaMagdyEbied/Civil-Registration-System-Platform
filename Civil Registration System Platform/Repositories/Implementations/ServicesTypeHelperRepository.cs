@@ -15,16 +15,4 @@ namespace Civil_Registration_System_Platform.Repositories.Implementations
             => await _context.ServicesTypeHelpers.ToListAsync();
     }
 
-    public class ApplicationTypeHelperRepository : IApplicationTypeHelperRepository
-    {
-        private readonly AppDbContext _context;
-        public ApplicationTypeHelperRepository(AppDbContext context) => _context = context;
-
-        public async Task<ApplicationTypeHelper?> GetByApplicationTypeAsync(int appTypeEnum)
-            => await _context.ApplicationTypeHelpers
-                .FirstOrDefaultAsync(a => a.ApplicationTypeEnum == appTypeEnum);
-
-        public async Task<IEnumerable<ApplicationTypeHelper>> GetAllAsync()
-            => await _context.ApplicationTypeHelpers.ToListAsync();
-    }
 }

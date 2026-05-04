@@ -363,7 +363,7 @@ namespace Civil_Registration_System_Platform.Models
         public DbSet<Appointment> Appointments { get; set; }        
         public DbSet<TimelineEntry> TimelineEntries { get; set; }   
         public DbSet<ApplicationDocuments> ApplicationDocuments { get; set; }       
-        public DbSet<ApplicationTypeHelper> ApplicationTypeHelpers { get; set; }    
+       // public DbSet<ApplicationTypeHelper> ApplicationTypeHelpers { get; set; }    
         public DbSet<ServicesTypeHelper> ServicesTypeHelpers { get; set; }  
 
     }
