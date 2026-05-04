@@ -7,22 +7,19 @@ namespace Civil_Registration_System_Platform.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IAccountServices _accountServices;
         private readonly IApplicationService _applicationService;
 
-        // Constructor واحد بيستقبل الاثنين مع بعض
-        public HomeController(IAccountServices accountServices, IApplicationService applicationService)
+        public HomeController(IApplicationService applicationService)
         {
-            _accountServices = accountServices;
             _applicationService = applicationService;
         }
 
-
         [HttpGet]
         public IActionResult Index()
-        {     
+        {
             return View();
         }
+
         [HttpGet]
         public IActionResult Track()
         {
@@ -39,22 +36,33 @@ namespace Civil_Registration_System_Platform.Controllers
                 return View();
             }
 
-            var application = await _applicationService.TrackApplicationAsync(applicationNumber);
-
-            if (application == null)
+            try
             {
-                TempData["Error"] = "لم يتم العثور على طلب بهذا الرقم.";
+                var result = await _applicationService.TrackApplicationAsync(applicationNumber);
+
+                if (result == null)
+                {
+                    TempData["ErrorMessage"] = "لم يتم العثور على طلب بهذا الرقم.";
+                    return View();
+                }
+
+                return View("TrackResult", result); 
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "حدث خطأ أثناء البحث. حاول مرة أخرى.";
                 return View();
             }
-
-            return View("TrackResult", application);
         }
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
+      
     }
 }

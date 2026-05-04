@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Civil_Registration_System_Platform.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "superadmin")]
     public class SuperAdminController : Controller
     {
         private readonly UserManager<UserAccount> _userManager;
