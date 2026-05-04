@@ -7,22 +7,18 @@ namespace Civil_Registration_System_Platform.Controllers
 {
     public class HomeController : Controller
     {
-<<<<<<< Updated upstream
-        private readonly IAccountServices accountServices;
-        public HomeController(IAccountServices accountServices)
-=======
+        private readonly IAccountServices _accountServices;
         private readonly IApplicationService _applicationService;
 
-        public HomeController(IApplicationService applicationService)
+        // Constructor واحد بيستقبل الاثنين مع بعض
+        public HomeController(IAccountServices accountServices, IApplicationService applicationService)
         {
+            _accountServices = accountServices;
             _applicationService = applicationService;
         }
+
+
         [HttpGet]
-        public IActionResult Index()
->>>>>>> Stashed changes
-        {
-            this.accountServices = accountServices;
-        }
         public IActionResult Index()
         {     
             return View();
