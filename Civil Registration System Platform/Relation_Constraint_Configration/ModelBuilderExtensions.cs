@@ -139,6 +139,10 @@ namespace Civil_Registration_System_Platform.Relation_Constraint_Configration
                     .HasForeignKey(t => t.PerformedById)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+
+
+            modelBuilder.Entity<ServicesTypeHelper>().HasKey(s => new { s.ServicesTypeEnum, s.ApplicationTypeEnum });
         }
     }
 }

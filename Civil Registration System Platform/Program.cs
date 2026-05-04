@@ -25,7 +25,7 @@ namespace Civil_Registration_System_Platform
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             builder.Services.AddScoped<ITimelineEntryRepository, TimelineEntryRepository>();
             builder.Services.AddScoped<IServicesTypeHelperRepository, ServicesTypeHelperRepository>();
-            builder.Services.AddScoped<IApplicationTypeHelperRepository, ApplicationTypeHelperRepository>();
+          //  builder.Services.AddScoped<IApplicationTypeHelperRepository, ApplicationTypeHelperRepository>();
 
             // Services
             builder.Services.AddScoped<IPricingService, PricingService>();
