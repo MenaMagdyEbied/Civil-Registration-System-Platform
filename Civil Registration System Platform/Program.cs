@@ -47,8 +47,6 @@ namespace Civil_Registration_System_Platform
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -60,15 +58,21 @@ namespace Civil_Registration_System_Platform
             }
 
             app.UseHttpsRedirection();
+
+            // Serve static files (wwwroot)
+            app.UseStaticFiles();
+
             app.UseRouting();
 
+            // Enable authentication if Identity is used
+            app.UseAuthentication();
             app.UseAuthorization();
 
             // app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-             //   .WithStaticAssets();
+                 //   .WithStaticAssets();
 
             app.Run();
         }

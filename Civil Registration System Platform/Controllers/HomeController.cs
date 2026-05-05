@@ -23,36 +23,33 @@ namespace Civil_Registration_System_Platform.Controllers
         [HttpGet]
         public IActionResult Track()
         {
-            return View();
+            return View(new Civil_Registration_System_Platform.ViewModel.Application.TrackVM());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Track(string applicationNumber)
+        public async Task<IActionResult> Track(Civil_Registration_System_Platform.ViewModel.Application.TrackVM model)
         {
-            if (string.IsNullOrWhiteSpace(applicationNumber))
+            if (model == null || string.IsNullOrWhiteSpace(model.ApplicationNumber))
             {
                 ModelState.AddModelError(string.Empty, "من فضلك أدخل رقم الطلب.");
-                return View();
+                return View(model ?? new Civil_Registration_System_Platform.ViewModel.Application.TrackVM());
             }
 
             try
             {
-                var result = await _applicationService.TrackApplicationAsync(applicationNumber);
-
-                if (result == null)
+                model.Result = await _applicationService.TrackApplicationAsync(model.ApplicationNumber);
+                if (model.Result == null)
                 {
                     TempData["ErrorMessage"] = "لم يتم العثور على طلب بهذا الرقم.";
-                    return View();
                 }
-
-                return View("TrackResult", result); 
             }
             catch
             {
                 TempData["ErrorMessage"] = "حدث خطأ أثناء البحث. حاول مرة أخرى.";
-                return View();
             }
+
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
