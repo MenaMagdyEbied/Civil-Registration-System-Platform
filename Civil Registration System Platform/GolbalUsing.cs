@@ -13,3 +13,6 @@ global using Civil_Registration_System_Platform.Account.AccountRepository;
 global using Civil_Registration_System_Platform.Account.AccountServices;
 global using Civil_Registration_System_Platform.GlobalServices.GlobalClass;
 global using Civil_Registration_System_Platform.GlobalServices.GlobalInterface;
+
+
+global using Civil_Registration_System_Platform.Enums;

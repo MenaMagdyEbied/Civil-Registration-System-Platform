@@ -3,6 +3,7 @@ using Civil_Registration_System_Platform.Repositories.Interfaces;
 using Civil_Registration_System_Platform.Services.Implementations;
 using Civil_Registration_System_Platform.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Identity.Client;
 
 namespace Civil_Registration_System_Platform
 {
@@ -24,11 +25,9 @@ namespace Civil_Registration_System_Platform
             builder.Services.AddScoped<IApplicationDocumentRepository, ApplicationDocumentRepository>();
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             builder.Services.AddScoped<ITimelineEntryRepository, TimelineEntryRepository>();
-            builder.Services.AddScoped<IServicesTypeHelperRepository, ServicesTypeHelperRepository>();
-          //  builder.Services.AddScoped<IApplicationTypeHelperRepository, ApplicationTypeHelperRepository>();
+            builder.Services.AddScoped<IServicesApplicationsReopsitory, ServicesApplicationsReopsitory>();
 
             // Services
-            builder.Services.AddScoped<IPricingService, PricingService>();
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<IApplicationService, ApplicationService>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
@@ -36,6 +35,7 @@ namespace Civil_Registration_System_Platform
             builder.Services.AddScoped<IOfficeServices, OfficeServices>();
             builder.Services.AddScoped<IAccountServices, AccountServices>();
             builder.Services.AddScoped<IAcccountManageServices, AcccountManageServices>();
+            builder.Services.AddScoped<IServicesApplicationsServices, ServicesApplicationsServices>();  
 
             builder.Services.AddHttpContextAccessor();
             // Add services to the container.
