@@ -13,7 +13,7 @@ namespace Civil_Registration_System_Platform.Services.Implementations
         private readonly IApplicationDocumentRepository _docRepo;
         private readonly ITimelineEntryRepository _timelineRepo;
         private readonly IAppointmentRepository _appointmentRepo;
-        private readonly IPricingService _pricingService;
+      //  private readonly IPricingService _pricingService;
         private readonly IFileService _fileService;
 
         public ApplicationService(
@@ -21,21 +21,21 @@ namespace Civil_Registration_System_Platform.Services.Implementations
             IApplicationDocumentRepository docRepo,
             ITimelineEntryRepository timelineRepo,
             IAppointmentRepository appointmentRepo,
-            IPricingService pricingService,
+     //       IPricingService pricingService,
             IFileService fileService)
         {
             _appRepo = appRepo;
             _docRepo = docRepo;
             _timelineRepo = timelineRepo;
             _appointmentRepo = appointmentRepo;
-            _pricingService = pricingService;
+      //      _pricingService = pricingService;
             _fileService = fileService;
         }
 
         public async Task<string> SubmitApplicationAsync(ApplyViewModel model, string userId)
         {
             var appNumber = await _appRepo.GenerateApplicationNumberAsync();
-            await _pricingService.CalculatePriceAsync(model.ServiceType, model.ApplicationType);
+          //  await _pricingService.CalculatePriceAsync(model.ServiceType, model.ApplicationType);
 
             var application = new Models.Application
             {
@@ -255,7 +255,7 @@ namespace Civil_Registration_System_Platform.Services.Implementations
                 ApplicationTypeName = appType.HasValue ? appType.Value.ToArabicName() : string.Empty,
                 StatusName = appStatus.ToArabicName(),
                 CreatedAt = app.CreatedAt,
-                Price = await _pricingService.CalculatePriceAsync(appServiceType, appType),
+            //    Price = await _pricingService.CalculatePriceAsync(appServiceType, appType),
                 ApplicantName = app.UserAccount?.FullName ?? string.Empty,
                 ApplicantNationalId = app.UserAccount?.NationalID ?? string.Empty,
                 ApplicantPhone = app.UserAccount?.EGPhoneNumber ?? string.Empty,
@@ -322,7 +322,7 @@ namespace Civil_Registration_System_Platform.Services.Implementations
                 StatusColor = appStatus.ToStatusColor(),
                 CreatedAt = app.CreatedAt,
                 OfficeName = app.Office?.Name ?? string.Empty,
-                Price = await _pricingService.CalculatePriceAsync(appServiceType, appType),
+             //   Price = await _pricingService.CalculatePriceAsync(appServiceType, appType),
                 Timeline = app.TimelineEntries?
                     .Where(t => !t.IsDeleted)
                     .OrderBy(t => t.Timestamp)
