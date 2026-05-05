@@ -1,4 +1,6 @@
-﻿namespace Civil_Registration_System_Platform.ViewModel.Application
+﻿
+namespace Civil_Registration_System_Platform.ViewModel.Application
+
 {
     public class TrackVM
     {
