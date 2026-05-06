@@ -1,0 +1,370 @@
+@model ApplyViewModel
+@{
+    ViewData["Title"] = "تقديم طلب جديد";
+    var formData = ViewBag.FormData as ApplyFormDataVM;
+}
+
+<!-- Breadcrumb -->
+<section style="background:var(--gov-white);padding:15px 0;border-bottom:1px solid var(--gov-border);">
+    <div class="container">
+        <nav>
+            <ol class="breadcrumb mb-0" style="font-size:0.88rem;">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" style="color:var(--gov-text-light);text-decoration:none;">الرئيسية</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-fragment="services" style="color:var(--gov-text-light);text-decoration:none;">الخدمات</a></li>
+                <li class="breadcrumb-item active" style="color:var(--gov-primary);font-weight:600;">تقديم طلب جديد</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <form asp-controller="Apply" asp-action="Submit" method="post" enctype="multipart/form-data" id="applyForm">
+            @Html.AntiForgeryToken()
+            <input asp-for="ServiceType" type="hidden" />
+
+            <div class="apply-section">
+                <!-- Service Header -->
+                <div class="detail-header">
+                    <div class="detail-icon @formData?.ColorClass">
+                        <i class="bi @formData?.Icon"></i>
+                    </div>
+                    <div>
+                        <h3>@formData?.ServiceTypeName</h3>
+                        <p>يرجى استكمال البيانات التالية لتقديم طلبك</p>
+                    </div>
+                </div>
+
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="d-flex flex-column align-items-center" style="min-width:80px;">
+                        <div class="step-dot active" id="stepDot1">1</div>
+                        <small class="mt-2 text-center" style="font-size:0.72rem;font-weight:600;">نوع الخدمة</small>
+                    </div>
+                    <div class="step-line" id="stepLine1"></div>
+                    <div class="d-flex flex-column align-items-center" style="min-width:80px;">
+                        <div class="step-dot" id="stepDot2">2</div>
+                        <small class="mt-2 text-center" style="font-size:0.72rem;font-weight:600;">البيانات الشخصية</small>
+                    </div>
+                    <div class="step-line" id="stepLine2"></div>
+                    <div class="d-flex flex-column align-items-center" style="min-width:80px;">
+                        <div class="step-dot" id="stepDot3">3</div>
+                        <small class="mt-2 text-center" style="font-size:0.72rem;font-weight:600;">المستندات</small>
+                    </div>
+                    <div class="step-line" id="stepLine3"></div>
+                    <div class="d-flex flex-column align-items-center" style="min-width:80px;">
+                        <div class="step-dot" id="stepDot4">4</div>
+                        <small class="mt-2 text-center" style="font-size:0.72rem;font-weight:600;">تأكيد وتقديم</small>
+                    </div>
+                </div>
+
+                <div asp-validation-summary="All" class="alert alert-gov-danger" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
+
+                <!-- Step 1: Choose Type -->
+                <div class="form-step active" id="formStep1">
+                    <h5 class="mb-4" style="font-weight:700;color:var(--gov-primary);">
+                        <i class="bi bi-list-check ms-2"></i> اختر نوع الخدمة
+                    </h5>
+                    <div class="row g-3">
+                        @if (formData != null)
+                        {
+                            foreach (var type in formData.AvailableTypes)
+                            {
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="service-type-card" data-type-id="@type.ApplicationTypeId"
+                                         data-docs="@string.Join("|", type.RequiredDocuments)"
+                                         data-price="@type.PriceDisplay"
+                                         onclick="selectType(this)">
+                                        <div class="type-icon"><i class="bi @formData.Icon"></i></div>
+                                        <div class="type-name">@type.ApplicationTypeName</div>
+                                        <div class="type-price">@type.PriceDisplay</div>
+                                        <div class="type-duration text-muted small mt-1">@type.DurationDisplay</div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <input asp-for="ApplicationType" type="hidden" id="ApplicationType" />
+
+                    <div id="requiredDocsContainer" class="mt-4" style="display:none;">
+                        <h6 class="mb-3" style="font-weight:700;color:var(--gov-primary);">
+                            <i class="bi bi-file-earmark-check ms-2"></i> المستندات المطلوبة
+                        </h6>
+                        <div id="requiredDocsList"></div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Personal Data -->
+                <div class="form-step" id="formStep2">
+                    <h5 class="mb-4" style="font-weight:700;color:var(--gov-primary);">
+                        <i class="bi bi-person ms-2"></i> البيانات الشخصية
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FullName" class="form-label">الاسم بالكامل <span class="text-danger">*</span></label>
+                            <input asp-for="FullName" class="form-control" placeholder="أدخل الاسم بالكامل">
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="NationalId" class="form-label">الرقم القومي <span class="text-danger">*</span></label>
+                            <input asp-for="NationalId" class="form-control" maxlength="14" placeholder="14 رقم">
+                            <span asp-validation-for="NationalId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label">رقم الموبايل <span class="text-danger">*</span></label>
+                            <input asp-for="Phone" class="form-control" maxlength="11" placeholder="01xxxxxxxxx">
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                            <input asp-for="Email" class="form-control" placeholder="example@email.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="GovernorateId" class="form-label">المحافظة <span class="text-danger">*</span></label>
+                            <select asp-for="GovernorateId" class="form-select" id="GovernorateId" onchange="loadOffices(this.value)">
+                                <option value="">اختر المحافظة</option>
+                                @if (formData != null)
+                                {
+                                    foreach (var g in formData.Governorates)
+                                    {
+                                        <option value="@g.GovernorateId">@g.Name</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="GovernorateId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="OfficeId" class="form-label">المكتب <span class="text-danger">*</span></label>
+                            <select asp-for="OfficeId" class="form-select" id="OfficeId" disabled>
+                                <option value="">اختر المحافظة أولاً</option>
+                            </select>
+                            <span asp-validation-for="OfficeId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label">العنوان</label>
+                            <input asp-for="Address" class="form-control" placeholder="العنوان بالتفصيل">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Upload Documents -->
+                <div class="form-step" id="formStep3">
+                    <h5 class="mb-4" style="font-weight:700;color:var(--gov-primary);">
+                        <i class="bi bi-cloud-arrow-up ms-2"></i> المستندات المطلوبة
+                    </h5>
+                    <div class="alert alert-gov-info mb-3">
+                        <i class="bi bi-info-circle ms-2"></i>
+                        ارفع المستندات بصيغة PDF أو JPG أو PNG — حد أقصى 5 ميجابايت لكل ملف
+                    </div>
+                    <div id="uploadDocsContainer" class="row g-3"></div>
+                </div>
+
+                <!-- Step 4: Confirm -->
+                <div class="form-step" id="formStep4">
+                    <h5 class="mb-4" style="font-weight:700;color:var(--gov-primary);">
+                        <i class="bi bi-check2-circle ms-2"></i> تأكيد وتقديم
+                    </h5>
+
+                    <div class="card mb-4" style="border-radius:12px;border:1px solid var(--gov-border);">
+                        <div class="card-header" style="background:linear-gradient(135deg, var(--gov-primary) 0%, var(--gov-primary-light) 100%);color:#fff;font-weight:700;">
+                            <i class="bi bi-clipboard-check ms-2"></i> ملخص الطلب
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="summaryContainer">
+                                <div class="col-md-6 mb-3">
+                                    <div style="font-size:0.8rem;color:var(--gov-text-light);">الخدمة</div>
+                                    <div style="font-weight:700;color:var(--gov-primary);">@formData?.ServiceTypeName</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div style="font-size:0.8rem;color:var(--gov-text-light);">نوع الطلب</div>
+                                    <div style="font-weight:700;color:var(--gov-primary);" id="summaryType">-</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div style="font-size:0.8rem;color:var(--gov-text-light);">الاسم</div>
+                                    <div style="font-weight:600;" id="summaryName">-</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div style="font-size:0.8rem;color:var(--gov-text-light);">الرقم القومي</div>
+                                    <div style="font-weight:600;" id="summaryNationalId" dir="ltr">-</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <div style="font-size:0.8rem;color:var(--gov-text-light);">الرسوم</div>
+                                    <div style="font-weight:700;color:var(--gov-secondary);font-size:1.1rem;" id="summaryPrice">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*  Delivery + Pickup office 
+
+                     *@
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="termsCheck">
+                        <label class="form-check-label" for="termsCheck">
+                            أوافق على <a href="#" style="color:var(--gov-secondary);">الشروط والأحكام</a> وسياسة الخصوصية
+                        </label>
+                    </div>
+
+                    <div class="alert alert-gov-info mb-0">
+                        <i class="bi bi-info-circle ms-2"></i>
+                        سيتم مراجعة طلبك من قبل الموظف المختص خلال 24-48 ساعة عمل
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="d-flex justify-content-between mt-4 pt-3" style="border-top:1px solid var(--gov-border);">
+                    <button type="button" class="btn btn-gov-outline" id="prevBtn" onclick="prevStep()" style="display:none;">
+                        <i class="bi bi-arrow-right ms-1"></i> السابق
+                    </button>
+                    <div></div>
+                    <button type="button" class="btn btn-gov-gold" id="nextBtn" onclick="nextStep()">
+                        التالي <i class="bi bi-arrow-left me-1"></i>
+                    </button>
+                    <button type="submit" class="btn btn-gov-gold btn-lg" id="submitBtn" style="display:none;">
+                        <i class="bi bi-send ms-1"></i> تقديم الطلب
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        var currentStep = 1, totalSteps = 4;
+
+        function selectType(card) {
+            document.querySelectorAll('.service-type-card').forEach(function (c) { c.classList.remove('selected'); });
+            card.classList.add('selected');
+
+            var typeId = card.getAttribute('data-type-id');
+            var docs   = (card.getAttribute('data-docs') || '').split('|').filter(function (d) { return d; });
+            var price  = card.getAttribute('data-price');
+
+            document.getElementById('ApplicationType').value = typeId;
+            document.getElementById('summaryType').textContent = card.querySelector('.type-name').textContent;
+            document.getElementById('summaryPrice').textContent = price;
+
+            //  docs list read only
+            var listContainer = document.getElementById('requiredDocsList');
+            listContainer.innerHTML = '';
+            docs.forEach(function (d) {
+                var div = document.createElement('div');
+                div.className = 'required-doc';
+                div.innerHTML = '<i class="bi bi-check-circle-fill doc-check"></i><span>' + d + '</span>';
+                listContainer.appendChild(div);
+            });
+            document.getElementById('requiredDocsContainer').style.display = 'block';
+
+            // upload inputs 
+            var uploadContainer = document.getElementById('uploadDocsContainer');
+            uploadContainer.innerHTML = '';
+            docs.forEach(function (d, idx) {
+                var col = document.createElement('div');
+                col.className = 'col-md-6 mb-3';
+                col.innerHTML =
+                    '<label class="form-label fw-bold" style="font-size:0.85rem;">' + d + '</label>' +
+                    '<input type="file" class="form-control" name="Documents" accept=".pdf,.jpg,.jpeg,.png">';
+                uploadContainer.appendChild(col);
+            });
+        }
+
+        function showStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.form-step').forEach(function (s) { s.classList.remove('active'); });
+            document.getElementById('formStep' + step).classList.add('active');
+            for (var i = 1; i <= totalSteps; i++) {
+                var dot = document.getElementById('stepDot' + i);
+                var line = document.getElementById('stepLine' + i);
+                if (dot) {
+                    dot.classList.remove('active', 'completed');
+                    if (i < step) dot.classList.add('completed');
+                    else if (i === step) dot.classList.add('active');
+                }
+                if (line) {
+                    line.classList.remove('completed');
+                    if (i < step) line.classList.add('completed');
+                }
+            }
+            document.getElementById('prevBtn').style.display   = step > 1 ? 'inline-block' : 'none';
+            document.getElementById('nextBtn').style.display   = step < totalSteps ? 'inline-block' : 'none';
+            document.getElementById('submitBtn').style.display = step === totalSteps ? 'inline-block' : 'none';
+        }
+
+        function nextStep() {
+            if (currentStep === 1 && !document.getElementById('ApplicationType').value) {
+                alert('اختر نوع الخدمة أولاً'); return;
+            }
+            if (currentStep === 2) {
+                var fn = document.getElementById('FullName').value.trim();
+                var ni = document.getElementById('NationalId').value.trim();
+                if (!fn || ni.length !== 14) { alert('املأ البيانات الشخصية المطلوبة'); return; }
+                document.getElementById('summaryName').textContent = fn;
+                document.getElementById('summaryNationalId').textContent = ni;
+            }
+            if (currentStep < totalSteps) showStep(currentStep + 1);
+        }
+        function prevStep() { if (currentStep > 1) showStep(currentStep - 1); }
+
+        document.getElementById('applyForm').addEventListener('submit', function (e) {
+            if (!document.getElementById('termsCheck').checked) {
+                e.preventDefault();
+                alert('يرجى الموافقة على الشروط والأحكام');
+            }
+        });
+
+        // ─── Delivery office 
+        
+        function toggleDelivery(useFiling) {
+            document.getElementById('deliveryFields').style.display = useFiling ? 'none' : '';
+            if (useFiling) {
+                document.getElementById('DeliveryGovernorateId').value = '';
+                document.getElementById('DeliveryOfficeId').innerHTML = '<option value="">اختر المحافظة أولاً</option>';
+                document.getElementById('DeliveryOfficeId').disabled = true;
+            }
+        }
+
+        function loadDeliveryOffices(governorateId) {
+            var select = document.getElementById('DeliveryOfficeId');
+            select.innerHTML = '<option value="">جاري التحميل...</option>';
+            select.disabled = true;
+            if (!governorateId) {
+                select.innerHTML = '<option value="">اختر المحافظة أولاً</option>';
+                return;
+            }
+            fetch('/Apply/GetOffices?governorateId=' + encodeURIComponent(governorateId))
+                .then(function (r) { return r.json(); })
+                .then(function (offices) {
+                    select.innerHTML = '<option value="">اختر المكتب</option>';
+                    offices.forEach(function (o) {
+                        var opt = document.createElement('option');
+                        opt.value = o.officeId;
+                        opt.textContent = o.name;
+                        select.appendChild(opt);
+                    });
+                    select.disabled = false;
+                });
+        }
+
+        function loadOffices(governorateId) {
+            var select = document.getElementById('OfficeId');
+            select.innerHTML = '<option value="">جاري التحميل...</option>';
+            select.disabled = true;
+            if (!governorateId) { select.innerHTML = '<option value="">اختر المحافظة أولاً</option>'; return; }
+            fetch('/Apply/GetOffices?governorateId=' + encodeURIComponent(governorateId))
+                .then(function (r) { return r.json(); })
+                .then(function (offices) {
+                    select.innerHTML = '<option value="">اختر المكتب</option>';
+                    offices.forEach(function (o) {
+                        var opt = document.createElement('option');
+                        opt.value = o.officeId;
+                        opt.textContent = o.name;
+                        select.appendChild(opt);
+                    });
+                    select.disabled = false;
+                });
+        }
+    </script>
+}

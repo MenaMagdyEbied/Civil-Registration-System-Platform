@@ -1,0 +1,52 @@
+@model IEnumerable<OfficeUserListItemVM>
+@{
+    ViewData["Title"] = "مواطنو المكتب";
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+        <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:20px;">
+            <i class="bi bi-people ms-2" style="color:var(--gov-secondary);"></i> مواطنو المكتب
+        </h4>
+
+        @if (!Model.Any())
+        {
+            <p class="text-muted text-center py-4">لا يوجد مواطنين في هذا المكتب</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="fee-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th><th>الرقم القومي</th><th>البريد</th>
+                            <th>الموبايل</th><th>الحالة</th><th>التسجيل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var u in Model)
+                        {
+                            <tr>
+                                <td style="font-weight:600;">@u.FullName</td>
+                                <td dir="ltr">@u.NationalID</td>
+                                <td dir="ltr">@u.Email</td>
+                                <td dir="ltr">@u.EGPhoneNumber</td>
+                                <td>
+                                    @if (u.IsRejected)
+                                    { <span class="badge-gov-danger">مرفوض</span> }
+                                    else if (u.IsConfirmed)
+                                    { <span class="badge-gov-success">معتمد</span> }
+                                    else
+                                    { <span class="badge-gov-warning">بانتظار</span> }
+                                </td>
+                                <td>@u.CreatedAt.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</main>

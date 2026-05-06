@@ -1,0 +1,164 @@
+@model PagedResult<ApplicationSummaryAdminVM>
+@{
+    ViewData["Title"] = "الطلبات";
+    var filterStatus  = ViewBag.FilterStatus  as ApplicationStatus?;
+    var filterService = ViewBag.FilterService as ServiceType?;
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h4 style="font-weight:800;color:var(--gov-primary);margin:0;">
+                <i class="bi bi-list-check ms-2" style="color:var(--gov-secondary);"></i> طلبات المكتب
+            </h4>
+            <span class="badge bg-secondary" style="font-size:0.85rem;">
+                إجمالي: @Model.TotalCount طلب
+            </span>
+        </div>
+
+        <!--  Filters + Search -->
+        <form method="get" class="row g-2 mb-4">
+            <div class="col-md-3">
+                <label class="form-label small">الحالة</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">جميع الحالات</option>
+                    @foreach (ApplicationStatus s in Enum.GetValues(typeof(ApplicationStatus)))
+                    {
+                        <option value="@s" selected="@(filterStatus == s)">@s.ToArabicName()</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">الخدمة</label>
+                <select name="serviceType" class="form-select form-select-sm">
+                    <option value="">جميع الخدمات</option>
+                    @foreach (ServiceType st in Enum.GetValues(typeof(ServiceType)))
+                    {
+                        <option value="@st" selected="@(filterService == st)">@st.ToArabicName()</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small">بحث (رقم الطلب / الرقم القومي / الاسم)</label>
+                <input type="text" name="q" value="@Model.SearchQuery" class="form-control form-control-sm"
+                       placeholder="CRS-2025-0042 أو 12345678901234">
+            </div>
+            <div class="col-md-2 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-gov-primary btn-sm w-100">
+                    <i class="bi bi-funnel ms-1"></i> تطبيق
+                </button>
+            </div>
+        </form>
+
+        <!-- ─── Results table ─── -->
+        <div class="table-responsive">
+            <table class="fee-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>المتقدم</th>
+                        <th>الرقم القومي</th>
+                        <th>الخدمة</th>
+                        <th>النوع</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Items.Any())
+                    {
+                        <tr><td colspan="8" class="text-center py-4">
+                            @if (!string.IsNullOrEmpty(Model.SearchQuery))
+                            { <text>لم يتم العثور على نتائج لـ "<strong>@Model.SearchQuery</strong>"</text> }
+                            else
+                            { <text>لا توجد طلبات</text> }
+                        </td></tr>
+                    }
+                    else
+                    {
+                        foreach (var a in Model.Items)
+                        {
+                            <tr>
+                                <td style="font-weight:600;" dir="ltr">@a.ApplicationNumber</td>
+                                <td>@a.ApplicantName</td>
+                                <td dir="ltr">@a.ApplicantNationalId</td>
+                                <td>@a.ServiceTypeName</td>
+                                <td>@a.ApplicationTypeName</td>
+                                <td><span style="color:@a.StatusColor;font-weight:700;">@a.StatusName</span></td>
+                                <td>@a.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <a asp-action="Review" asp-route-id="@a.ApplicationId" class="btn btn-gov-primary btn-sm" style="padding:4px 12px;font-size:0.8rem;border-radius:8px;">مراجعة</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ─── Pagination ─── -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+                        <a class="page-link" asp-action="Applications"
+                           asp-route-status="@filterStatus" asp-route-serviceType="@filterService"
+                           asp-route-q="@Model.SearchQuery" asp-route-page="@(Model.Page - 1)">
+                            <i class="bi bi-chevron-right"></i> السابق
+                        </a>
+                    </li>
+
+                    @{
+                        var startPage = Math.Max(1, Model.Page - 2);
+                        var endPage   = Math.Min(Model.TotalPages, Model.Page + 2);
+                    }
+                    @if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Applications"
+                               asp-route-status="@filterStatus" asp-route-serviceType="@filterService"
+                               asp-route-q="@Model.SearchQuery" asp-route-page="1">1</a>
+                        </li>
+                        @if (startPage > 2)
+                        { <li class="page-item disabled"><span class="page-link">...</span></li> }
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link" asp-action="Applications"
+                               asp-route-status="@filterStatus" asp-route-serviceType="@filterService"
+                               asp-route-q="@Model.SearchQuery" asp-route-page="@i">@i</a>
+                        </li>
+                    }
+
+                    @if (endPage < Model.TotalPages)
+                    {
+                        @if (endPage < Model.TotalPages - 1)
+                        { <li class="page-item disabled"><span class="page-link">...</span></li> }
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Applications"
+                               asp-route-status="@filterStatus" asp-route-serviceType="@filterService"
+                               asp-route-q="@Model.SearchQuery" asp-route-page="@Model.TotalPages">@Model.TotalPages</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.HasNext ? "" : "disabled")">
+                        <a class="page-link" asp-action="Applications"
+                           asp-route-status="@filterStatus" asp-route-serviceType="@filterService"
+                           asp-route-q="@Model.SearchQuery" asp-route-page="@(Model.Page + 1)">
+                            التالي <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                </ul>
+                <p class="text-center text-muted small">
+                    صفحة @Model.Page من @Model.TotalPages
+                </p>
+            </nav>
+        }
+    </div>
+</main>
