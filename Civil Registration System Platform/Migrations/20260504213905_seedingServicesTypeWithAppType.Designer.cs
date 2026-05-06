@@ -4,6 +4,7 @@ using Civil_Registration_System_Platform.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Civil_Registration_System_Platform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260504213905_seedingServicesTypeWithAppType")]
+    partial class seedingServicesTypeWithAppType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2156,8 +2159,8 @@ namespace Civil_Registration_System_Platform.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             CardImagePath = "default.png",
-                            ConcurrencyStamp = "2b372abf-5513-4802-a1b4-e4584e03d528",
-                            CreatedAt = new DateOnly(2026, 5, 5),
+                            ConcurrencyStamp = "c6ba6516-881a-4323-95a3-788e0addccbd",
+                            CreatedAt = new DateOnly(2026, 5, 4),
                             EGPhoneNumber = "01000000000",
                             Email = "superadmin@gmail.com",
                             EmailConfirmed = true,
@@ -2170,9 +2173,9 @@ namespace Civil_Registration_System_Platform.Migrations
                             NationalID = "12345678901234",
                             NormalizedEmail = "SUPERADMIN@GMAIL.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKYQ2tzvM38LPlV1z+8MG+tK7/G1Ng3Gtk75CdE59B4Z4LEr0KcucraibliIe2DGIA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHGKwyt9DqxdoeAI8Pmzilxjs/YXa5DD3ysPQVX6GsYe1Ny04iUCjhceQXmU+P8zIA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4b224923-3faf-4c86-b0c7-ca9010830528",
+                            SecurityStamp = "4140e0ad-2b08-4670-b048-1e1d505ac6fd",
                             TwoFactorEnabled = false,
                             UserName = "superadmin"
                         });

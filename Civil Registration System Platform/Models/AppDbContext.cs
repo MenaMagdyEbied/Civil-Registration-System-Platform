@@ -354,6 +354,37 @@ namespace Civil_Registration_System_Platform.Models
 );
             #endregion
 
+            #region seeding Servisis with application
+            modelBuilder.Entity<ServicesTypeHelper>().HasData(
+                new ServicesTypeHelper { ServicesTypeEnum=(int)ServiceType.BirthCertificate , ApplicationTypeEnum=(int)ApplicationType.New , MinDays=0 , MaxDays=0 , Price=63},
+
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.DeathCertificate, ApplicationTypeEnum = (int)ApplicationType.New, MinDays = 1, MaxDays = 3, Price = 63 },
+
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.MarriageCertificate, ApplicationTypeEnum = (int)ApplicationType.New, MinDays = 1, MaxDays = 3, Price = 63 },
+
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.DivorceCertificate, ApplicationTypeEnum = (int)ApplicationType.New, MinDays = 1, MaxDays = 3, Price = 63 },
+
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.FamilyCard, ApplicationTypeEnum = (int)ApplicationType.New, MinDays = 1, MaxDays = 3, Price = 63 },
+
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.IndividualRecord, ApplicationTypeEnum = (int)ApplicationType.New, MinDays = 1, MaxDays = 3, Price = 63 },
+
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.NationalId, ApplicationTypeEnum = (int)ApplicationType.New, MinDays = 3, MaxDays = 7, Price = 75 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.NationalId, ApplicationTypeEnum = (int)ApplicationType.Renewal, MinDays = 3, MaxDays = 7, Price = 75 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.NationalId, ApplicationTypeEnum = (int)ApplicationType.Replacement, MinDays = 3, MaxDays = 7, Price = 315 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.NationalId, ApplicationTypeEnum = (int)ApplicationType.Damaged, MinDays = 3, MaxDays = 7, Price = 265 },
+
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.Passport, ApplicationTypeEnum = (int)ApplicationType.New, MinDays = 3, MaxDays = 7, Price = 500 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.Passport, ApplicationTypeEnum = (int)ApplicationType.Renewal, MinDays = 3, MaxDays = 7, Price = 500 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.Passport, ApplicationTypeEnum = (int)ApplicationType.Replacement, MinDays = 3, MaxDays = 7, Price = 600 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.Passport, ApplicationTypeEnum = (int)ApplicationType.Damaged, MinDays = 3, MaxDays = 7, Price = 500 },
+
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.DriversLicense, ApplicationTypeEnum = (int)ApplicationType.New, MinDays = 7, MaxDays = 14, Price = 1140 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.DriversLicense, ApplicationTypeEnum = (int)ApplicationType.Renewal, MinDays = 7, MaxDays = 14, Price = 1015 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.DriversLicense, ApplicationTypeEnum = (int)ApplicationType.Replacement, MinDays = 7, MaxDays = 14, Price = 265 },
+                new ServicesTypeHelper { ServicesTypeEnum = (int)ServiceType.DriversLicense, ApplicationTypeEnum = (int)ApplicationType.Damaged, MinDays = 7, MaxDays = 14, Price = 215 }
+
+                );
+            #endregion
 
         }
         public DbSet<UserAccount> UserAccounts { get; set; }

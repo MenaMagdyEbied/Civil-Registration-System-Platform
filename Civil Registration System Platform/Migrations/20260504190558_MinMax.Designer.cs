@@ -4,6 +4,7 @@ using Civil_Registration_System_Platform.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Civil_Registration_System_Platform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260504190558_MinMax")]
+    partial class MinMax
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1830,152 +1833,6 @@ namespace Civil_Registration_System_Platform.Migrations
                     b.HasKey("ServicesTypeEnum", "ApplicationTypeEnum");
 
                     b.ToTable("ServicesTypeHelpers");
-
-                    b.HasData(
-                        new
-                        {
-                            ServicesTypeEnum = 1,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 0,
-                            MinDays = 0,
-                            Price = 63
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 2,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 3,
-                            MinDays = 1,
-                            Price = 63
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 3,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 3,
-                            MinDays = 1,
-                            Price = 63
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 4,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 3,
-                            MinDays = 1,
-                            Price = 63
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 8,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 3,
-                            MinDays = 1,
-                            Price = 63
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 9,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 3,
-                            MinDays = 1,
-                            Price = 63
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 5,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 7,
-                            MinDays = 3,
-                            Price = 75
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 5,
-                            ApplicationTypeEnum = 2,
-                            MaxDays = 7,
-                            MinDays = 3,
-                            Price = 75
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 5,
-                            ApplicationTypeEnum = 4,
-                            MaxDays = 7,
-                            MinDays = 3,
-                            Price = 315
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 5,
-                            ApplicationTypeEnum = 8,
-                            MaxDays = 7,
-                            MinDays = 3,
-                            Price = 265
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 6,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 7,
-                            MinDays = 3,
-                            Price = 500
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 6,
-                            ApplicationTypeEnum = 2,
-                            MaxDays = 7,
-                            MinDays = 3,
-                            Price = 500
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 6,
-                            ApplicationTypeEnum = 4,
-                            MaxDays = 7,
-                            MinDays = 3,
-                            Price = 600
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 6,
-                            ApplicationTypeEnum = 8,
-                            MaxDays = 7,
-                            MinDays = 3,
-                            Price = 500
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 10,
-                            ApplicationTypeEnum = 1,
-                            MaxDays = 14,
-                            MinDays = 7,
-                            Price = 1140
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 10,
-                            ApplicationTypeEnum = 2,
-                            MaxDays = 14,
-                            MinDays = 7,
-                            Price = 1015
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 10,
-                            ApplicationTypeEnum = 4,
-                            MaxDays = 14,
-                            MinDays = 7,
-                            Price = 265
-                        },
-                        new
-                        {
-                            ServicesTypeEnum = 10,
-                            ApplicationTypeEnum = 8,
-                            MaxDays = 14,
-                            MinDays = 7,
-                            Price = 215
-                        });
                 });
 
             modelBuilder.Entity("Civil_Registration_System_Platform.Models.TimelineEntry", b =>
@@ -2156,8 +2013,8 @@ namespace Civil_Registration_System_Platform.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             CardImagePath = "default.png",
-                            ConcurrencyStamp = "2b372abf-5513-4802-a1b4-e4584e03d528",
-                            CreatedAt = new DateOnly(2026, 5, 5),
+                            ConcurrencyStamp = "1b2a63b3-16cb-4909-96c4-977c9eb58ccc",
+                            CreatedAt = new DateOnly(2026, 5, 4),
                             EGPhoneNumber = "01000000000",
                             Email = "superadmin@gmail.com",
                             EmailConfirmed = true,
@@ -2170,9 +2027,9 @@ namespace Civil_Registration_System_Platform.Migrations
                             NationalID = "12345678901234",
                             NormalizedEmail = "SUPERADMIN@GMAIL.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKYQ2tzvM38LPlV1z+8MG+tK7/G1Ng3Gtk75CdE59B4Z4LEr0KcucraibliIe2DGIA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELnXAbAxdYhVDAEDCVRopq6mt4grk9ICuGxfL4yqdLRMRhVPfVdMrpehFcOk5WLeZw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4b224923-3faf-4c86-b0c7-ca9010830528",
+                            SecurityStamp = "a5d411f1-6d87-483e-b4a6-7889fa9ceb28",
                             TwoFactorEnabled = false,
                             UserName = "superadmin"
                         });
