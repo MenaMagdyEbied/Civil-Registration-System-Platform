@@ -1,0 +1,57 @@
+@model IEnumerable<AppointmentSummaryVM>
+@{
+    ViewData["Title"] = "جدول المواعيد";
+    var selectedDate = (DateTime)(ViewBag.SelectedDate ?? DateTime.Today);
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="bg-white rounded-3 shadow-sm p-4 mb-3" style="border:1px solid var(--gov-border);">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h4 style="font-weight:800;color:var(--gov-primary);margin:0;">
+                <i class="bi bi-calendar3 ms-2" style="color:var(--gov-secondary);"></i> جدول المواعيد
+            </h4>
+            <form method="get" class="d-flex gap-2">
+                <input type="date" name="date" value="@selectedDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm">
+                <button type="submit" class="btn btn-gov-primary btn-sm">عرض</button>
+            </form>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-x" style="font-size:3rem;color:var(--gov-text-light);"></i>
+                <p style="color:var(--gov-text-light);margin-top:10px;">لا توجد مواعيد في هذا اليوم</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="fee-table">
+                    <thead>
+                        <tr>
+                            <th>الوقت</th>
+                            <th>رقم الطلب</th>
+                            <th>الخدمة</th>
+                            <th>الحالة</th>
+                            <th>المكتب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.OrderBy(x => x.AppointmentDate))
+                        {
+                            <tr>
+                                <td style="font-weight:700;">@a.AppointmentDate.ToString("HH:mm")</td>
+                                <td dir="ltr">@a.ApplicationNumber</td>
+                                <td>@a.ServiceTypeName</td>
+                                <td>@a.StatusName</td>
+                                <td>@a.OfficeName</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</main>

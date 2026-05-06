@@ -1,0 +1,65 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "تسجيل الدخول";
+    Layout = "_Layout";
+}
+
+<div class="auth-page">
+    <div class="container py-4">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+                <div class="auth-card">
+                    <div class="text-center mb-4">
+                        <div style="width:70px;height:70px;background:var(--gov-secondary);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:15px;">🏛️</div>
+                        <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:5px;">نظام التسجيل المدني</h4>
+                        <p style="color:var(--gov-text-light);font-size:0.9rem;">سجّل دخولك لحسابك</p>
+                    </div>
+
+                    <form asp-controller="Account" asp-action="Login" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-gov-danger" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label fw-semibold">اسم المستخدم / البريد / الرقم القومي</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input asp-for="UserName" class="form-control" placeholder="أدخل أحد البيانات" autocomplete="username">
+                            </div>
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PassWord" class="form-label fw-semibold">كلمة المرور</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input asp-for="PassWord" type="password" class="form-control" placeholder="أدخل كلمة المرور" autocomplete="current-password">
+                            </div>
+                            <span asp-validation-for="PassWord" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-gov-gold btn-lg w-100 mb-3">
+                            <i class="bi bi-box-arrow-in-left me-2"></i> تسجيل الدخول
+                        </button>
+                    </form>
+
+                    <div class="text-center mb-3">
+                        <p class="mb-0">
+                            ليس لديك حساب؟
+                            <a asp-controller="Account" asp-action="Register" class="fw-semibold" style="color:var(--gov-secondary);">سجّل الآن</a>
+                        </p>
+                    </div>
+
+                    <div class="text-center">
+                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none" style="color:var(--gov-text-light);">
+                            <i class="bi bi-arrow-right me-1"></i> العودة للرئيسية
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

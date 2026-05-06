@@ -1,112 +1,78 @@
-﻿@{
-    ViewData["Title"] = "Home";
-}
+@model TrackVM
 @{
-    Layout = "~/Views/Layouts/MainLayout.cshtml";
+    ViewData["Title"] = "تتبع الطلب";
 }
 
-@model Civil_Registration_System_Platform.ViewModel.Application.TrackVM
-
-@* ===== BREADCRUMB ===== *@
-<section style="background:var(--gov-light); padding:15px 0; border-bottom:1px solid var(--gov-border);">
+<!-- Breadcrumb -->
+<section style="background:var(--gov-white);padding:15px 0;border-bottom:1px solid var(--gov-border);">
     <div class="container">
-        <nav aria-label="breadcrumb">
+        <nav>
             <ol class="breadcrumb mb-0" style="font-size:0.88rem;">
-                <li class="breadcrumb-item">
-                    @Html.ActionLink("الرئيسية", "Index", "Home", null, new { style = "color:var(--gov-primary); text-decoration:none;" })
-                </li>
-                <li class="breadcrumb-item active" aria-current="page" style="color:var(--gov-text-light);">تتبع طلب</li>
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" style="color:var(--gov-text-light);text-decoration:none;">الرئيسية</a></li>
+                <li class="breadcrumb-item active" style="color:var(--gov-primary);font-weight:600;">تتبع الطلب</li>
             </ol>
         </nav>
     </div>
 </section>
 
-@* ===== TRACK SECTION ===== *@
-<section class="track-section" id="track-section">
+<section class="track-section">
     <div class="container">
         <div class="track-card fade-up">
             <div class="text-center mb-4">
-                <div style="width:80px; height:80px; border-radius:50%; background:rgba(200,164,21,0.15); display:inline-flex; align-items:center; justify-content:center; margin-bottom:15px;">
-                    <i class="bi bi-search" style="font-size:2rem; color:var(--gov-secondary);"></i>
+                <div style="width:80px;height:80px;border-radius:50%;background:rgba(200,164,21,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:15px;">
+                    <i class="bi bi-search" style="font-size:2rem;color:var(--gov-secondary);"></i>
                 </div>
-                <h3 class="fw-800 mb-2" style="color:var(--gov-white);">تتبع طلبك</h3>
-                <p style="color:rgba(255,255,255,0.65); font-size:0.95rem;">أدخل رقم الطلب الخاص بك لمعرفة حالة المعاملة</p>
+                <h3 style="font-weight:800;color:var(--gov-white);">تتبع طلبك</h3>
+                <p style="color:rgba(255,255,255,0.65);">أدخل رقم الطلب لمعرفة حالة المعاملة</p>
             </div>
 
-            @using (Html.BeginForm("Track", "Home", FormMethod.Post))
-            {
+            <form asp-controller="Home" asp-action="Track" method="post">
                 @Html.AntiForgeryToken()
                 <div class="mb-3">
-                    @Html.TextBoxFor(m => m.ApplicationNumber, new {
-                        @class = "form-control",
-                        id = "trackInput",
-                        placeholder = "مثال: CRS-2025-0042",
-                        style = "text-align:center;"
-                    })
-                    @Html.ValidationMessageFor(m => m.ApplicationNumber, "", new { @class = "text-danger small" })
+                    <input asp-for="ApplicationNumber" class="form-control" placeholder="مثال: CRS-2025-0042" style="text-align:center;" autocomplete="off">
+                    <span asp-validation-for="ApplicationNumber" class="text-danger small"></span>
                 </div>
                 <button type="submit" class="btn btn-gov-gold w-100">
-                    <i class="bi bi-search ms-2"></i>بحث
+                    <i class="bi bi-search ms-2"></i> بحث
                 </button>
-            }
+            </form>
         </div>
 
-        @* ===== TRACK RESULT ===== *@
-        <div class="track-result" id="trackResult">
-            @if (Model.Result != null)
-            {
+        @if (Model.Result != null)
+        {
+            <div class="track-result show mt-4">
                 @await Html.PartialAsync("_TrackResultPartial", Model.Result)
-            }
-        </div>
+            </div>
+        }
     </div>
 </section>
 
-@* ===== HOW TO FIND YOUR NUMBER ===== *@
 <section class="py-5" style="background:var(--gov-white);">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="text-center mb-4 fade-up">
-                    <div style="width:60px; height:60px; border-radius:50%; background:var(--gov-light); display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
-                        <i class="bi bi-info-circle" style="font-size:1.5rem; color:var(--gov-primary);"></i>
-                    </div>
-                    <h4 style="font-weight:800; color:var(--gov-primary); margin-bottom:8px;">كيف تجد رقم الطلب؟</h4>
-                    <p style="color:var(--gov-text-light); font-size:0.92rem;">رقم الطلب هو المعرف الفريد لمعاملتك في النظام</p>
+                    <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:8px;">كيف تجد رقم الطلب؟</h4>
+                    <p style="color:var(--gov-text-light);">رقم الطلب هو المعرف الفريد لمعاملتك في النظام</p>
                 </div>
-                <div class="card fade-up" style="border-radius:16px; border:1px solid var(--gov-border); box-shadow:var(--gov-card-shadow);">
+                <div class="card fade-up" style="border-radius:16px;border:1px solid var(--gov-border);box-shadow:var(--gov-card-shadow);">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-start gap-3 mb-3">
-                            <div style="width:40px; height:40px; border-radius:10px; background:#e3f2fd; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                <i class="bi bi-upc-scan" style="color:#1565c0; font-size:1.1rem;"></i>
+                            <div style="width:40px;height:40px;border-radius:10px;background:#e3f2fd;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi bi-upc-scan" style="color:#1565c0;font-size:1.1rem;"></i>
                             </div>
                             <div>
-                                <h6 style="font-weight:700; color:var(--gov-primary); margin-bottom:4px;">صيغة رقم الطلب</h6>
-                                <p style="color:var(--gov-text-light); font-size:0.88rem; margin:0;">رقم الطلب يتكون من <strong style="color:var(--gov-secondary);">CRS-السنة-XXXX</strong></p>
+                                <h6 style="font-weight:700;color:var(--gov-primary);margin-bottom:4px;">صيغة رقم الطلب</h6>
+                                <p style="color:var(--gov-text-light);font-size:0.88rem;margin:0;">
+                                    رقم الطلب يتكون من <strong style="color:var(--gov-secondary);">CRS-السنة-XXXX</strong>
+                                </p>
                             </div>
                         </div>
-                        <div class="d-flex align-items-start gap-3 mb-3">
-                            <div style="width:40px; height:40px; border-radius:10px; background:#e8f5e9; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                <i class="bi bi-envelope" style="color:#1a7a3a; font-size:1.1rem;"></i>
-                            </div>
-                            <div>
-                                <h6 style="font-weight:700; color:var(--gov-primary); margin-bottom:4px;">رسالة التأكيد</h6>
-                                <p style="color:var(--gov-text-light); font-size:0.88rem; margin:0;">تجده في رسالة التأكيد التي تصلك بعد تقديم الطلب</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-start gap-3 mb-3">
-                            <div style="width:40px; height:40px; border-radius:10px; background:#fff3e0; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                <i class="bi bi-speedometer2" style="color:#e65100; font-size:1.1rem;"></i>
-                            </div>
-                            <div>
-                                <h6 style="font-weight:700; color:var(--gov-primary); margin-bottom:4px;">لوحة التحكم</h6>
-                                <p style="color:var(--gov-text-light); font-size:0.88rem; margin:0;">تجده في لوحة التحكم الخاصة بحسابك على النظام</p>
-                            </div>
-                        </div>
-                        <hr style="border-color:var(--gov-border); margin:20px 0;">
+                        <hr style="border-color:var(--gov-border);margin:20px 0;">
                         <div class="text-center">
-                            <p style="color:var(--gov-text-light); font-size:0.85rem; margin-bottom:8px;">مثال على رقم الطلب:</p>
-                            <div style="background:var(--gov-light); border:2px dashed var(--gov-border); border-radius:10px; padding:12px 24px; display:inline-block; direction:ltr;">
-                                <span style="font-weight:800; font-size:1.2rem; color:var(--gov-secondary); letter-spacing:2px;">CRS-2025-0042</span>
+                            <p style="color:var(--gov-text-light);font-size:0.85rem;margin-bottom:8px;">مثال على رقم الطلب:</p>
+                            <div style="background:var(--gov-light);border:2px dashed var(--gov-border);border-radius:10px;padding:12px 24px;display:inline-block;direction:ltr;">
+                                <span style="font-weight:800;font-size:1.2rem;color:var(--gov-secondary);letter-spacing:2px;">CRS-2025-0042</span>
                             </div>
                         </div>
                     </div>
@@ -116,65 +82,6 @@
     </div>
 </section>
 
-@* ===== QUICK LINKS ===== *@
-<section class="py-5" style="background:var(--gov-light);">
-    <div class="container">
-        <div class="section-title fade-up">
-            <div class="title-line"></div>
-            <h2>روابط سريعة</h2>
-            <p>خدمات أخرى قد تحتاجها</p>
-        </div>
-        <div class="row g-4 justify-content-center">
-
-            @* Card 1: تقديم طلب جديد *@
-            <div class="col-md-6 col-lg-4 fade-up">
-                @Html.ActionLink("", "Index", "Home", null, new { @class = "text-decoration-none" })
-                <a href="@Url.Action("Index", "Home")" style="text-decoration:none;">
-                    <div class="service-card text-center" style="cursor:pointer;">
-                        <div class="card-icon color-nationalid mx-auto" style="width:70px; height:70px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:20px;">
-                            <i class="bi bi-file-earmark-plus"></i>
-                        </div>
-                        <h5>تقديم طلب جديد</h5>
-                        <p style="color:var(--gov-text-light); font-size:0.88rem;">قدّم طلبك إلكترونياً بكل سهولة ويسر</p>
-                        <span style="color:var(--gov-secondary); font-weight:600; font-size:0.85rem;">
-                            ابدأ الآن <i class="bi bi-arrow-left"></i>
-                        </span>
-                    </div>
-                </a>
-            </div>
-
-            @* Card 2: لوحة التحكم *@
-            <div class="col-md-6 col-lg-4 fade-up">
-                <a href="@Url.Action("Index", "Home")" style="text-decoration:none;">
-                    <div class="service-card text-center" style="cursor:pointer;">
-                        <div class="card-icon color-passport mx-auto" style="width:70px; height:70px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:20px;">
-                            <i class="bi bi-speedometer2"></i>
-                        </div>
-                        <h5>لوحة التحكم</h5>
-                        <p style="color:var(--gov-text-light); font-size:0.88rem;">تابع جميع طلباتك وإجراءاتك من مكان واحد</p>
-                        <span style="color:var(--gov-secondary); font-weight:600; font-size:0.85rem;">
-                            دخول اللوحة <i class="bi bi-arrow-left"></i>
-                        </span>
-                    </div>
-                </a>
-            </div>
-
-            @* Card 3: تواصل معنا *@
-            <div class="col-md-6 col-lg-4 fade-up">
-                <a href="@Url.Action("Index", "Home", null, null, null, "contact")" style="text-decoration:none;">
-                    <div class="service-card text-center" style="cursor:pointer;">
-                        <div class="card-icon color-family mx-auto" style="width:70px; height:70px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:20px;">
-                            <i class="bi bi-headset"></i>
-                        </div>
-                        <h5>تواصل معنا</h5>
-                        <p style="color:var(--gov-text-light); font-size:0.88rem;">هل تحتاج مساعدة؟ فريقنا جاهز لخدمتك</p>
-                        <span style="color:var(--gov-secondary); font-weight:600; font-size:0.85rem;">
-                            تواصل الآن <i class="bi bi-arrow-left"></i>
-                        </span>
-                    </div>
-                </a>
-            </div>
-
-        </div>
-    </div>
-</section>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

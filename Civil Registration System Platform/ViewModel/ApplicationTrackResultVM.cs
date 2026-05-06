@@ -1,5 +1,5 @@
 ﻿using Civil_Registration_System_Platform.ViewModel.Application;
-
+using Civil_Registration_System_Platform.Models;
 namespace Civil_Registration_System_Platform.ViewModel
 {
     public class ApplicationTrackResultVM

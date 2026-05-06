@@ -1,0 +1,59 @@
+@model AdminListItemVM
+@{
+    ViewData["Title"] = "تفاصيل الأدمن";
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <a asp-action="Admins" class="btn btn-gov-outline btn-sm mb-3">
+        <i class="bi bi-arrow-right ms-1"></i> العودة لقائمة الأدمن
+    </a>
+
+    <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                @if (!string.IsNullOrEmpty(Model.CardImagePath))
+                {
+                    <img src="@Model.CardImagePath" alt="بطاقة" class="img-fluid rounded" style="max-height:240px;border:1px solid var(--gov-border);">
+                }
+                else
+                {
+                    <div style="width:200px;height:200px;background:var(--gov-light);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-shield-check" style="font-size:5rem;color:var(--gov-text-light);"></i>
+                    </div>
+                }
+
+                <div class="mt-3">
+                    @if (Model.IsActive)
+                    { <span class="badge-gov-success">نشط</span> }
+                    else
+                    { <span class="badge-gov-danger">معطل</span> }
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <h4 style="font-weight:800;color:var(--gov-primary);">@Model.FullName</h4>
+                <hr>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">البريد</dt><dd class="col-sm-8" dir="ltr">@Model.Email</dd>
+                    <dt class="col-sm-4 text-muted">الموبايل</dt><dd class="col-sm-8" dir="ltr">@Model.EGPhoneNumber</dd>
+                    <dt class="col-sm-4 text-muted">الرقم القومي</dt><dd class="col-sm-8" dir="ltr">@Model.NationalID</dd>
+                    <dt class="col-sm-4 text-muted">المحافظة</dt><dd class="col-sm-8">@Model.GovernorateName</dd>
+                    <dt class="col-sm-4 text-muted">المكتب المُدار</dt><dd class="col-sm-8">@Model.ManageOfficeName</dd>
+                    <dt class="col-sm-4 text-muted">المكتب المرتبط</dt><dd class="col-sm-8">@Model.OfficeName</dd>
+                    <dt class="col-sm-4 text-muted">تاريخ الإنشاء</dt><dd class="col-sm-8">@Model.CreatedAt.ToString("yyyy-MM-dd")</dd>
+                </dl>
+
+                <hr>
+                <form asp-action="ToggleAdmin" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="adminId" value="@Model.AdminId">
+                    <button type="submit" class="btn btn-gov-outline">
+                        @(Model.IsActive ? "تعطيل الحساب" : "إعادة تفعيل الحساب")
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>

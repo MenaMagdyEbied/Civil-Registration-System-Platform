@@ -1,0 +1,112 @@
+@model UserAccountEdit
+@inject Civil_Registration_System_Platform.Services.Interfaces.IGovernorateServices GovServices
+@{
+    ViewData["Title"] = "تعديل البيانات";
+    var governorates = await GovServices.GetAllGovernoratesAsync();
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+                    <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:25px;">
+                        <i class="bi bi-pencil-square ms-2" style="color:var(--gov-secondary);"></i> تعديل بيانات الحساب
+                    </h4>
+
+                    <form asp-controller="Account" asp-action="EditAccount" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-gov-danger" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="FullName" class="form-label fw-semibold">الاسم</label>
+                                <input asp-for="FullName" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="NationalID" class="form-label fw-semibold">الرقم القومي</label>
+                                <input asp-for="NationalID" class="form-control" maxlength="14">
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label fw-semibold">البريد الإلكتروني</label>
+                                <input asp-for="Email" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="EGPhoneNumber" class="form-label fw-semibold">رقم الموبايل</label>
+                                <input asp-for="EGPhoneNumber" class="form-control" maxlength="11">
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Gender" class="form-label fw-semibold">النوع</label>
+                                <select asp-for="Gender" class="form-select">
+                                    <option value="1">ذكر</option>
+                                    <option value="2">أنثى</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="MaritalStatus" class="form-label fw-semibold">الحالة الاجتماعية</label>
+                                <select asp-for="MaritalStatus" class="form-select">
+                                    <option value="1">أعزب</option>
+                                    <option value="2">متزوج</option>
+                                    <option value="3">مطلق</option>
+                                    <option value="4">أرمل</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="GovernorateId" class="form-label fw-semibold">المحافظة</label>
+                                <select asp-for="GovernorateId" class="form-select" id="GovernorateId" onchange="loadOffices(this.value)">
+                                    <option value="">اختر المحافظة</option>
+                                    @foreach (var g in governorates)
+                                    {
+                                        <option value="@g.GovernorateId">@g.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="OfficeId" class="form-label fw-semibold">المكتب</label>
+                                <select asp-for="OfficeId" class="form-select" id="OfficeId">
+                                    <option value="">اختر</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="CardImage" class="form-label fw-semibold">صورة بطاقة الرقم القومي (للتحديث)</label>
+                                <input asp-for="CardImage" type="file" class="form-control" accept="image/*">
+                                <small class="text-muted">اتركها فارغة للاحتفاظ بالصورة الحالية</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4 pt-3" style="border-top:1px solid var(--gov-border);">
+                            <a asp-controller="Account" asp-action="MyAccount" class="btn btn-gov-outline">
+                                <i class="bi bi-arrow-right ms-1"></i> إلغاء
+                            </a>
+                            <button type="submit" class="btn btn-gov-gold">
+                                <i class="bi bi-save ms-1"></i> حفظ التغييرات
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function loadOffices(governorateId) {
+            var select = document.getElementById('OfficeId');
+            select.innerHTML = '<option value="">جاري التحميل...</option>';
+            if (!governorateId) { select.innerHTML = '<option value="">اختر المحافظة أولاً</option>'; return; }
+            fetch('/Apply/GetOffices?governorateId=' + encodeURIComponent(governorateId))
+                .then(function (r) { return r.json(); })
+                .then(function (offices) {
+                    select.innerHTML = '<option value="">اختر المكتب</option>';
+                    offices.forEach(function (o) {
+                        var opt = document.createElement('option');
+                        opt.value = o.officeId;
+                        opt.textContent = o.name;
+                        select.appendChild(opt);
+                    });
+                });
+        }
+    </script>
+}

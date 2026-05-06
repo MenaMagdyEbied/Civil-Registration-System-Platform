@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\AdminController.cs.cs" />
+    <Compile Remove="Controllers\ApplyController.cs.cs" />
+    <Compile Remove="Controllers\DashboardController.cs.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.26" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.26" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.26" />
@@ -20,6 +26,12 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\AccountCardImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Controllers\AdminController.cs.cs" />
+    <None Include="Controllers\ApplyController.cs.cs" />
+    <None Include="Controllers\DashboardController.cs.cs" />
   </ItemGroup>
 
 </Project>

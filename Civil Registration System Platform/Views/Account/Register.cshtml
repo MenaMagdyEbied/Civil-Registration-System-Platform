@@ -1,0 +1,207 @@
+@model RegisterViewModel
+@inject Civil_Registration_System_Platform.Services.Interfaces.IGovernorateServices GovServices
+@{
+    ViewData["Title"] = "إنشاء حساب";
+    Layout = "_Layout";
+    var governorates = await GovServices.GetAllGovernoratesAsync();
+}
+
+<div class="auth-page">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+                <div class="auth-card">
+                    <div class="text-center mb-4">
+                        <div class="fs-1 mb-2">🏛️</div>
+                        <h4 class="fw-bold mb-1" style="color:var(--gov-primary);">نظام التسجيل المدني</h4>
+                        <p class="text-muted">أنشئ حسابك الجديد</p>
+                    </div>
+
+                    <div class="alert alert-gov-info mb-4" style="font-size:0.88rem;">
+                        <i class="bi bi-shield-check ms-2"></i>
+                        بعد التسجيل، سيتم مراجعة بياناتك وصورة بطاقتك من قِبل الأدمن.
+                        لن تتمكن من تقديم طلبات حتى يتم اعتماد الحساب.
+                    </div>
+
+                    <form asp-controller="Account" asp-action="Register" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-gov-danger" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label fw-semibold">الاسم بالكامل <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <input asp-for="FullName" class="form-control" placeholder="أدخل اسمك بالكامل">
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label fw-semibold">اسم المستخدم <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-at"></i></span>
+                                <input asp-for="UserName" class="form-control" placeholder="4 حروف">
+                            </div>
+                            <small class="text-muted">يستخدم لتسجيل الدخول</small>
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="NationalID" class="form-label fw-semibold">الرقم القومي <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                                <input asp-for="NationalID" class="form-control" maxlength="14" placeholder="14 رقم">
+                            </div>
+                            <span asp-validation-for="NationalID" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold">البريد الإلكتروني <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control" placeholder="example@email.com">
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="EGPhoneNumber" class="form-label fw-semibold">رقم الموبايل <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                                <input asp-for="EGPhoneNumber" class="form-control" maxlength="11" placeholder="01xxxxxxxxx">
+                            </div>
+                            <span asp-validation-for="EGPhoneNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="Gender" class="form-label fw-semibold">النوع <span class="text-danger">*</span></label>
+                                <select asp-for="Gender" class="form-select">
+                                    <option value="">اختر</option>
+                                    <option value="1">ذكر</option>
+                                    <option value="2">أنثى</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="MaritalStatus" class="form-label fw-semibold">الحالة الاجتماعية <span class="text-danger">*</span></label>
+                                <select asp-for="MaritalStatus" class="form-select">
+                                    <option value="">اختر</option>
+                                    <option value="1">أعزب</option>
+                                    <option value="2">متزوج</option>
+                                    <option value="3">مطلق</option>
+                                    <option value="4">أرمل</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <label asp-for="GovernorateId" class="form-label fw-semibold">المحافظة <span class="text-danger">*</span></label>
+                                <select asp-for="GovernorateId" class="form-select" id="GovernorateId" onchange="loadOffices(this.value)">
+                                    <option value="">اختر المحافظة</option>
+                                    @foreach (var g in governorates)
+                                    {
+                                        <option value="@g.GovernorateId">@g.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="OfficeId" class="form-label fw-semibold">المكتب <span class="text-danger">*</span></label>
+                                <select asp-for="OfficeId" class="form-select" id="OfficeId" disabled>
+                                    <option value="">اختر المحافظة أولاً</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label asp-for="CardImage" class="form-label fw-semibold">صورة بطاقة الرقم القومي <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-image"></i></span>
+                                <input asp-for="CardImage" type="file" class="form-control" accept="image/*">
+                            </div>
+                            <small class="text-muted">JPG/PNG — حد أقصى 5MB — يستخدمها الأدمن للتحقق من بياناتك</small>
+                            <span asp-validation-for="CardImage" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PassWord" class="form-label fw-semibold">كلمة المرور <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input asp-for="PassWord" type="password" class="form-control" placeholder="6 أحرف على الأقل">
+                            </div>
+                            <span asp-validation-for="PassWord" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">تأكيد كلمة المرور <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control">
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">أوافق على <a href="#">الشروط والأحكام</a> وسياسة الخصوصية</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-gov-gold btn-lg w-100 mb-3">
+                            <i class="bi bi-person-plus me-2"></i> إنشاء حساب
+                        </button>
+                    </form>
+
+                    <div class="text-center mb-3">
+                        <p class="mb-0">لديك حساب بالفعل؟ <a asp-controller="Account" asp-action="Login" class="fw-semibold">سجّل دخول</a></p>
+                    </div>
+                    <div class="text-center">
+                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                            <i class="bi bi-arrow-right me-1"></i> العودة للرئيسية
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // cascading: governorate -office
+        function loadOffices(governorateId, selectedOfficeId) {
+            var select = document.getElementById('OfficeId');
+            select.innerHTML = '<option value="">جاري التحميل...</option>';
+            select.disabled = true;
+            if (!governorateId) {
+                select.innerHTML = '<option value="">اختر المحافظة أولاً</option>';
+                return;
+            }
+
+            fetch('/Apply/GetOffices?governorateId=' + encodeURIComponent(governorateId))
+                .then(function (r) { return r.json(); })
+                .then(function (offices) {
+                    select.innerHTML = '<option value="">اختر المكتب</option>';
+                    offices.forEach(function (o) {
+                        var opt = document.createElement('option');
+                        opt.value = o.officeId;
+                        opt.textContent = o.name;
+                        if (selectedOfficeId && String(o.officeId) === String(selectedOfficeId)) {
+                            opt.selected = true;
+                        }
+                        select.appendChild(opt);
+                    });
+                    select.disabled = false;
+                })
+                .catch(function () { select.innerHTML = '<option value="">حدث خطأ</option>'; });
+        }
+
+       
+        (function () {
+            var govSelect = document.getElementById('GovernorateId');
+            var preGov    = govSelect ? govSelect.value : '';
+            var preOffice = '@(Model?.OfficeId > 0 ? Model.OfficeId.ToString() : "")';
+            if (preGov) loadOffices(preGov, preOffice);
+        })();
+    </script>
+}

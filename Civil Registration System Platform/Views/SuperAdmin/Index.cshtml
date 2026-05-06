@@ -1,1 +1,168 @@
-﻿
+@model SuperAdminDashboardVM
+@{
+    ViewData["Title"] = "لوحة السوبر أدمن";
+}
+
+<main class="container py-4">
+    <!-- System Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#e3f2fd;color:#1565c0;"><i class="bi bi-file-earmark-text"></i></div>
+                    <div>
+                        <div style="font-size:1.5rem;font-weight:800;color:#0d2137;">@Model.TotalApplicationsToday</div>
+                        <div style="font-size:0.82rem;color:#6c757d;font-weight:600;">طلبات اليوم</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#fff8e1;color:#c8a415;"><i class="bi bi-hourglass-split"></i></div>
+                    <div>
+                        <div style="font-size:1.5rem;font-weight:800;color:#0d2137;">@Model.TotalPendingReview</div>
+                        <div style="font-size:0.82rem;color:#6c757d;font-weight:600;">بانتظار المراجعة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#e8f5e9;color:#1a7a3a;"><i class="bi bi-check-circle"></i></div>
+                    <div>
+                        <div style="font-size:1.5rem;font-weight:800;color:#0d2137;">@Model.TotalIssuedToday</div>
+                        <div style="font-size:0.82rem;color:#6c757d;font-weight:600;">صادر اليوم</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#f3e5f5;color:#7b1fa2;"><i class="bi bi-building"></i></div>
+                    <div>
+                        <div style="font-size:1.5rem;font-weight:800;color:#0d2137;">@Model.TotalActiveOffices</div>
+                        <div style="font-size:0.82rem;color:#6c757d;font-weight:600;">مكاتب نشطة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-2 mb-4">
+        <div class="col-md-4"><a asp-action="Admins" class="btn btn-gov-outline w-100"><i class="bi bi-shield-check ms-1"></i> إدارة الأدمن</a></div>
+        <div class="col-md-4"><a asp-action="CreateAdmin" class="btn btn-gov-gold w-100"><i class="bi bi-person-plus ms-1"></i> إضافة أدمن</a></div>
+        <div class="col-md-4"><a asp-action="Pricing" class="btn btn-gov-outline w-100"><i class="bi bi-cash-stack ms-1"></i> إدارة الأسعار</a></div>
+    </div>
+
+    <!-- Stats by Office -->
+    <div class="bg-white rounded-3 shadow-sm p-4 mb-4" style="border:1px solid var(--gov-border);">
+        <h5 style="font-weight:700;color:var(--gov-primary);margin-bottom:20px;">
+            <i class="bi bi-building ms-2" style="color:var(--gov-secondary);"></i> أداء المكاتب
+        </h5>
+
+        @if (!Model.StatsByOffice.Any())
+        {
+            <p class="text-muted">لا توجد بيانات.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="fee-table">
+                    <thead>
+                        <tr>
+                            <th>المكتب</th><th>المحافظة</th><th>إجمالي</th>
+                            <th>بانتظار</th><th>صادر</th><th>مرفوض</th><th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model.StatsByOffice.OrderByDescending(x => x.TotalApplications).Take(20))
+                        {
+                            <tr>
+                                <td style="font-weight:600;">@o.OfficeName</td>
+                                <td>@o.GovernorateName</td>
+                                <td>@o.TotalApplications</td>
+                                <td><span style="color:#c8a415;font-weight:700;">@o.PendingCount</span></td>
+                                <td><span style="color:#1a7a3a;font-weight:700;">@o.IssuedCount</span></td>
+                                <td><span style="color:#c41e3a;font-weight:700;">@o.RejectedCount</span></td>
+                                <td>
+                                    @if (o.IsActive)
+                                    { <span class="badge-gov-success">نشط</span> }
+                                    else
+                                    { <span class="badge-gov-danger">معطل</span> }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <!-- Stats by Service -->
+    @if (Model.StatsByService.Any())
+    {
+        <div class="bg-white rounded-3 shadow-sm p-4 mb-4" style="border:1px solid var(--gov-border);">
+            <h5 style="font-weight:700;color:var(--gov-primary);margin-bottom:20px;">
+                <i class="bi bi-pie-chart ms-2" style="color:var(--gov-secondary);"></i> الإحصائيات حسب الخدمة
+            </h5>
+            <div class="table-responsive">
+                <table class="fee-table">
+                    <thead>
+                        <tr>
+                            <th>الخدمة</th><th>إجمالي</th><th>بانتظار</th>
+                            <th>موافق</th><th>صادر</th><th>مرفوض</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.StatsByService)
+                        {
+                            <tr>
+                                <td style="font-weight:600;">@s.ServiceTypeName</td>
+                                <td>@s.TotalApplications</td>
+                                <td>@s.PendingCount</td>
+                                <td>@s.ApprovedCount</td>
+                                <td>@s.IssuedCount</td>
+                                <td>@s.RejectedCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <!-- Recent Applications -->
+    @if (Model.RecentApplications.Any())
+    {
+        <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+            <h5 style="font-weight:700;color:var(--gov-primary);margin-bottom:20px;">
+                <i class="bi bi-clock-history ms-2" style="color:var(--gov-secondary);"></i> آخر الطلبات
+            </h5>
+            <div class="table-responsive">
+                <table class="fee-table">
+                    <thead>
+                        <tr><th>رقم</th><th>المتقدم</th><th>الخدمة</th><th>النوع</th><th>الحالة</th><th>التاريخ</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.RecentApplications.Take(20))
+                        {
+                            <tr>
+                                <td dir="ltr" style="font-weight:600;">@a.ApplicationNumber</td>
+                                <td>@a.ApplicantName</td>
+                                <td>@a.ServiceTypeName</td>
+                                <td>@a.ApplicationTypeName</td>
+                                <td><span style="color:@a.StatusColor;font-weight:700;">@a.StatusName</span></td>
+                                <td>@a.CreatedAt.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</main>

@@ -1,0 +1,92 @@
+@model RegisterAdminOrEmployeeViewModel
+@{
+    ViewData["Title"] = "Create governorate admin";
+    var govs = ViewBag.Governorates as List<GovernorateGetAll> ?? new List<GovernorateGetAll>();
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+                <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:25px;">
+                    <i class="bi bi-shield-plus ms-2" style="color:var(--gov-secondary);"></i> Create governorate admin
+                </h4>
+
+                <form asp-action="CreateAdmin" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-gov-danger" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FullName" class="form-label fw-semibold">Full name</label>
+                            <input asp-for="FullName" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="UserName" class="form-label fw-semibold">Username</label>
+                            <input asp-for="UserName" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="NationalID" class="form-label fw-semibold">National ID</label>
+                            <input asp-for="NationalID" class="form-control" maxlength="14">
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold">Email</label>
+                            <input asp-for="Email" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EGPhoneNumber" class="form-label fw-semibold">Phone</label>
+                            <input asp-for="EGPhoneNumber" class="form-control" maxlength="11">
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Gender" class="form-label fw-semibold">Gender</label>
+                            <select asp-for="Gender" class="form-select">
+                                <option value="1">Male</option>
+                                <option value="2">Female</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="MaritalStatus" class="form-label fw-semibold">Marital status</label>
+                            <select asp-for="MaritalStatus" class="form-select">
+                                <option value="1">Single</option>
+                                <option value="2">Married</option>
+                                <option value="3">Divorced</option>
+                                <option value="4">Widowed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="GovernorateId" class="form-label fw-semibold">Governorate to manage</label>
+                            <select asp-for="GovernorateId" class="form-select">
+                                <option value="">Choose governorate</option>
+                                @foreach (var g in govs)
+                                {
+                                    <option value="@g.GovernorateId">@g.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PassWord" class="form-label fw-semibold">Password</label>
+                            <input asp-for="PassWord" type="password" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">Confirm password</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4 pt-3" style="border-top:1px solid var(--gov-border);">
+                        <a asp-action="Admins" class="btn btn-gov-outline">
+                            <i class="bi bi-arrow-right ms-1"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-gov-gold">
+                            <i class="bi bi-shield-plus ms-1"></i> Create admin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
