@@ -1,259 +1,208 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Civil_Registration_System_Platform.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Civil_Registration_System_Platform.Controllers
 {
-    [Authorize(Roles = "superadmin")]
+    [Authorize(Roles = "SuperAdmin")]
     public class SuperAdminController : Controller
     {
         private readonly UserManager<UserAccount> _userManager;
-        private readonly IAccountServices _accountServices;
+        private readonly ISuperAdminService _superAdminService;
+        private readonly IAdminManagementService _adminManagementService;
+        private readonly IPricingManagementService _pricingManagementService;
+        private readonly IGovernorateServices _governorateServices;
+        private readonly IOfficeServices _officeServices;
 
         public SuperAdminController(
             UserManager<UserAccount> userManager,
-            IAccountServices accountServices)
+            ISuperAdminService superAdminService,
+            IAdminManagementService adminManagementService,
+            IPricingManagementService pricingManagementService,
+            IGovernorateServices governorateServices,
+            IOfficeServices officeServices)
         {
             _userManager = userManager;
-            _accountServices = accountServices;
+            _superAdminService = superAdminService;
+            _adminManagementService = adminManagementService;
+            _pricingManagementService = pricingManagementService;
+            _governorateServices = governorateServices;
+            _officeServices = officeServices;
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> Index(
+            ApplicationStatus? status = null,
+            ServiceType? serviceType = null,
+            int? officeId = null,
+            DateTime? dateFrom = null,
+            DateTime? dateTo = null)
+        {
+            var vm = await _superAdminService.GetDashboardAsync(
+                status, serviceType, officeId, dateFrom, dateTo);
+            return View(vm);
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> Admins()
+        {
+            var admins = await _adminManagementService.GetAllAdminsAsync();
+            return View(admins);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> AdminDetails(string id)
         {
-            var admins = await _userManager.GetUsersInRoleAsync("Admin");
+            var admin = await _adminManagementService.GetAdminAsync(id);
 
-            var viewModel = new SuperAdminDashboardViewModel
+            if (admin == null)
             {
-                Admins = admins.ToList(),
-                TotalAdmins = admins.Count
-            };
+                TempData["Error"] = "لم يتم العثور على الأدمن";
+                return RedirectToAction(nameof(Admins));
+            }
 
-            return View(viewModel);
+            return View(admin);
         }
 
 
         [HttpGet]
-        public IActionResult AddAdmin()
+        public async Task<IActionResult> CreateAdmin()
         {
+            ViewBag.Governorates = await _governorateServices.GetAllGovernoratesAsync();
             return View(new RegisterAdminOrEmployeeViewModel());
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddAdmin(RegisterAdminOrEmployeeViewModel model)
+        public async Task<IActionResult> CreateAdmin(RegisterAdminOrEmployeeViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                ViewBag.Governorates = await _governorateServices.GetAllGovernoratesAsync();
                 return View(model);
-
-            var result = await _accountServices.RegisterAdminAsync(model);
-
-            if (IsSuccess(result))
-            {
-                TempData["SuccessMessage"] = "تم إضافة الأدمن بنجاح.";
-                return RedirectToAction(nameof(Index));
             }
 
-            ModelState.AddModelError(string.Empty, result);
-            return View(model);
+            try
+            {
+                var result = await _adminManagementService.CreateAdminAsync(model);
+
+                if (result.Contains("Successfully", StringComparison.OrdinalIgnoreCase))
+                {
+                    TempData["Success"] = "تم إنشاء حساب الأدمن بنجاح";
+                    return RedirectToAction(nameof(Admins));
+                }
+
+                ModelState.AddModelError(string.Empty, result);
+                ViewBag.Governorates = await _governorateServices.GetAllGovernoratesAsync();
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                ViewBag.Governorates = await _governorateServices.GetAllGovernoratesAsync();
+                return View(model);
+            }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Details(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                TempData["ErrorMessage"] = "معرف الأدمن مطلوب.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var admin = await _userManager.FindByIdAsync(id);
-
-            if (admin == null)
-            {
-                TempData["ErrorMessage"] = "الأدمن غير موجود.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(admin);
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> EditAdmin(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                TempData["ErrorMessage"] = "معرف الأدمن مطلوب.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var admin = await _userManager.FindByIdAsync(id);
-
-            if (admin == null)
-            {
-                TempData["ErrorMessage"] = "الأدمن غير موجود.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var model = new EditAdminViewModel
-            {
-                Id = admin.Id,
-                FullName = admin.FullName,
-                Email = admin.Email ?? string.Empty,
-                EGPhoneNumber = admin.EGPhoneNumber,
-                NationalID = admin.NationalID,
-                OfficeId = admin.OfficeId,
-                ManageOfficeId = admin.ManageOfficeId
-            };
-
-            return View(model);
-        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAdmin(EditAdminViewModel model)
+        public async Task<IActionResult> ToggleAdmin(string adminId)
+        {
+            try
+            {
+                var result = await _adminManagementService.ToggleAdminActiveAsync(adminId);
+                TempData["Success"] = result;
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Admins));
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> Pricing()
+        {
+            var prices = await _pricingManagementService.GetAllPricesAsync();
+            return View(prices);
+        }
+
+
+        [HttpGet]
+        public IActionResult CreatePrice() => View(new PricingFormVM());
+
+
+        [HttpGet]
+        public async Task<IActionResult> EditPrice(ServiceType serviceType, ApplicationType applicationType)
+        {
+            var vm = await _pricingManagementService.GetPriceAsync(serviceType, applicationType);
+
+            if (vm == null)
+            {
+                TempData["Error"] = "لم يتم العثور على السعر المطلوب";
+                return RedirectToAction(nameof(Pricing));
+            }
+
+            return View(vm);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SavePrice(PricingFormVM model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+                return View("CreatePrice", model);
 
-            var admin = await _userManager.FindByIdAsync(model.Id);
-
-            if (admin == null)
+            try
             {
-                TempData["ErrorMessage"] = "الأدمن غير موجود.";
-                return RedirectToAction(nameof(Index));
+                var result = await _pricingManagementService.UpsertPriceAsync(model);
+                TempData["Success"] = result;
+                return RedirectToAction(nameof(Pricing));
             }
-
-            admin.FullName = model.FullName;
-            admin.EGPhoneNumber = model.EGPhoneNumber;
-            admin.NationalID = model.NationalID;
-            admin.OfficeId = model.OfficeId;
-            admin.ManageOfficeId = model.ManageOfficeId;
-
-            if (admin.Email != model.Email)
-                await _userManager.SetEmailAsync(admin, model.Email);
-
-            var result = await _userManager.UpdateAsync(admin);
-
-            if (result.Succeeded)
+            catch (Exception ex)
             {
-                TempData["SuccessMessage"] = "تم تعديل بيانات الأدمن بنجاح.";
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("CreatePrice", model);
             }
-
-            foreach (var error in result.Errors)
-                ModelState.AddModelError(string.Empty, error.Description);
-
-            return View(model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> DeleteAdmin(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                TempData["ErrorMessage"] = "معرف الأدمن مطلوب.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var admin = await _userManager.FindByIdAsync(id);
-
-            if (admin == null)
-            {
-                TempData["ErrorMessage"] = "الأدمن غير موجود.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(admin);
-        }
-
-        [HttpPost]
-        [ActionName("DeleteAdmin")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteAdminConfirmed(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                TempData["ErrorMessage"] = "معرف الأدمن مطلوب.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var admin = await _userManager.FindByIdAsync(id);
-
-            if (admin == null)
-            {
-                TempData["ErrorMessage"] = "الأدمن غير موجود.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var result = await _userManager.DeleteAsync(admin);
-
-            TempData[result.Succeeded ? "SuccessMessage" : "ErrorMessage"] =
-                result.Succeeded ? "تم حذف الأدمن بنجاح." : "حدث خطأ أثناء الحذف.";
-
-            return RedirectToAction(nameof(Index));
-        }
-
-
-        [HttpGet]
-        public async Task<IActionResult> ResetPassword(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                TempData["ErrorMessage"] = "معرف الأدمن مطلوب.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var admin = await _userManager.FindByIdAsync(id);
-
-            if (admin == null)
-            {
-                TempData["ErrorMessage"] = "الأدمن غير موجود.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(new ResetAdminPasswordViewModel { Id = id, FullName = admin.FullName });
-        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(ResetAdminPasswordViewModel model)
+        public async Task<IActionResult> DeletePrice(ServiceType serviceType, ApplicationType applicationType)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var admin = await _userManager.FindByIdAsync(model.Id);
-
-            if (admin == null)
+            try
             {
-                TempData["ErrorMessage"] = "الأدمن غير موجود.";
-                return RedirectToAction(nameof(Index));
+                var result = await _pricingManagementService.DeletePriceAsync(serviceType, applicationType);
+                TempData["Success"] = result;
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(admin);
-            var result = await _userManager.ResetPasswordAsync(admin, token, model.NewPassword);
-
-            if (result.Succeeded)
-            {
-                TempData["SuccessMessage"] = "تم إعادة تعيين كلمة السر بنجاح.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            foreach (var error in result.Errors)
-                ModelState.AddModelError(string.Empty, error.Description);
-
-            return View(model);
+            return RedirectToAction(nameof(Pricing));
         }
 
 
-        private static bool IsSuccess(string result) =>
-            result == "Success" ||
-            result.Contains("Successfully") ||
-            result.Contains("بنجاح") ||
-            result.Contains("تم");
 
-
+        [HttpGet]
+        public async Task<IActionResult> GetOffices(int governorateId)
+        {
+            var offices = await _officeServices.GetByGovernorateIdAsync(governorateId);
+            return Json(offices);
+        }
     }
 }
