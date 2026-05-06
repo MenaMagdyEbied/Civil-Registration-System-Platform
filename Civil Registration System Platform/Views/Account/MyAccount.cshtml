@@ -1,0 +1,101 @@
+@model GetMyAccount
+@{
+    ViewData["Title"] = "حسابي";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <h4 style="font-weight:800;color:var(--gov-primary);margin:0;">
+                            <i class="bi bi-person-circle ms-2" style="color:var(--gov-secondary);"></i> حسابي
+                        </h4>
+                        <a asp-controller="Account" asp-action="EditAccount" class="btn btn-gov-gold btn-sm">
+                            <i class="bi bi-pencil-square ms-1"></i> تعديل البيانات
+                        </a>
+                    </div>
+
+                    @if (!Model.IsConfirmed && !Model.IsRejected)
+                    {
+                        <div class="alert alert-gov-warning">
+                            <i class="bi bi-clock-history ms-2"></i>
+                            حسابك بانتظار اعتماد الأدمن. لن تتمكن من تقديم طلبات حتى يتم الاعتماد.
+                        </div>
+                    }
+                    @if (Model.IsRejected)
+                    {
+                        <div class="alert alert-gov-danger">
+                            <i class="bi bi-x-octagon ms-2"></i>
+                            تم رفض حسابك: @Model.RejectionMessage
+                        </div>
+                    }
+
+                    <div class="row g-4">
+                        <div class="col-md-4 text-center">
+                            @if (!string.IsNullOrEmpty(Model.CardImagePath))
+                            {
+                                <img src="@Model.CardImagePath" alt="بطاقة الهوية" class="img-fluid rounded" style="max-height:220px;border:1px solid var(--gov-border);">
+                            }
+                            else
+                            {
+                                <div style="width:200px;height:200px;background:var(--gov-light);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;">
+                                    <i class="bi bi-person" style="font-size:5rem;color:var(--gov-text-light);"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4 text-muted">الاسم</dt>
+                                <dd class="col-sm-8">@Model.FullName</dd>
+
+                                <dt class="col-sm-4 text-muted">الرقم القومي</dt>
+                                <dd class="col-sm-8" dir="ltr">@Model.NationalID</dd>
+
+                                <dt class="col-sm-4 text-muted">البريد الإلكتروني</dt>
+                                <dd class="col-sm-8" dir="ltr">@Model.Email</dd>
+
+                                <dt class="col-sm-4 text-muted">رقم الموبايل</dt>
+                                <dd class="col-sm-8" dir="ltr">@Model.EGPhoneNumber</dd>
+
+                                <dt class="col-sm-4 text-muted">النوع</dt>
+                                <dd class="col-sm-8">@(Model.Gender == 1 ? "ذكر" : "أنثى")</dd>
+
+                                <dt class="col-sm-4 text-muted">الحالة الاجتماعية</dt>
+                                <dd class="col-sm-8">
+                                    @switch (Model.MaritalStatus)
+                                    {
+                                        case 1: <text>أعزب</text> break;
+                                        case 2: <text>متزوج</text> break;
+                                        case 3: <text>مطلق</text> break;
+                                        case 4: <text>أرمل</text> break;
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4 text-muted">المحافظة</dt>
+                                <dd class="col-sm-8">@Model.GovernorateName</dd>
+
+                                <dt class="col-sm-4 text-muted">المكتب</dt>
+                                <dd class="col-sm-8">@Model.OfficeName</dd>
+
+                                <dt class="col-sm-4 text-muted">حالة الحساب</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.IsRejected)
+                                    { <span class="badge-gov-danger">مرفوض</span> }
+                                    else if (Model.IsConfirmed)
+                                    { <span class="badge-gov-success">معتمد</span> }
+                                    else
+                                    { <span class="badge-gov-warning">بانتظار الاعتماد</span> }
+                                </dd>
+
+                                <dt class="col-sm-4 text-muted">تاريخ التسجيل</dt>
+                                <dd class="col-sm-8">@Model.CreatedAt.ToString("yyyy-MM-dd")</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

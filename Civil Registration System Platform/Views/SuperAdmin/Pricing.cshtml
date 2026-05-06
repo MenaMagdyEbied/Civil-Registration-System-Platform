@@ -1,0 +1,70 @@
+@model IEnumerable<PricingListItemVM>
+@{
+    ViewData["Title"] = "إدارة الأسعار";
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h4 style="font-weight:800;color:var(--gov-primary);margin:0;">
+                <i class="bi bi-cash-stack ms-2" style="color:var(--gov-secondary);"></i> أسعار الخدمات
+            </h4>
+            <a asp-action="CreatePrice" class="btn btn-gov-gold btn-sm">
+                <i class="bi bi-plus-circle ms-1"></i> إضافة سعر
+            </a>
+        </div>
+
+        <div class="alert alert-gov-info">
+            <i class="bi bi-info-circle ms-2"></i>
+            أي تعديل هنا يظهر فوراً في الصفحة الرئيسية وصفحة Apply وفي طلبات المواطنين الجديدة.
+        </div>
+
+        <div class="table-responsive">
+            <table class="fee-table">
+                <thead>
+                    <tr>
+                        <th>الخدمة</th><th>نوع الطلب</th><th>السعر</th>
+                        <th>المدة</th><th>المستندات</th><th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    { <tr><td colspan="6" class="text-center py-4">لا توجد أسعار مسجلة</td></tr> }
+                    else
+                    {
+                        foreach (var p in Model)
+                        {
+                            <tr>
+                                <td style="font-weight:600;">@p.ServiceTypeName</td>
+                                <td>@p.ApplicationTypeName</td>
+                                <td><span style="color:var(--gov-secondary);font-weight:700;">@p.PriceDisplay</span></td>
+                                <td>@p.DurationDisplay</td>
+                                <td style="font-size:0.82rem;color:var(--gov-text-light);max-width:300px;">
+                                    @if (!string.IsNullOrEmpty(p.Details))
+                                    {
+                                        @string.Join("، ", p.Details.Split(new[] { '|', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                                    }
+                                </td>
+                                <td class="d-flex gap-2">
+                                    <a asp-action="EditPrice" asp-route-serviceType="@p.ServiceTypeId" asp-route-applicationType="@p.ApplicationTypeId" class="btn btn-gov-outline btn-sm" style="padding:4px 10px;font-size:0.78rem;">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeletePrice" method="post" class="d-inline" onsubmit="return confirm('حذف هذا السعر؟');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="serviceType" value="@p.ServiceTypeId">
+                                        <input type="hidden" name="applicationType" value="@p.ApplicationTypeId">
+                                        <button type="submit" class="btn btn-gov-danger btn-sm" style="padding:4px 10px;font-size:0.78rem;">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

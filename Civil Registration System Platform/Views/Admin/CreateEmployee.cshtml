@@ -1,0 +1,102 @@
+@model RegisterAdminOrEmployeeViewModel
+@{
+    ViewData["Title"] = "إنشاء موظف";
+    var offices = ViewBag.Offices as List<OfficeGovernrate> ?? new List<OfficeGovernrate>();
+    var governorateId = ViewBag.GovernorateId as int?;
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+                <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:25px;">
+                    <i class="bi bi-person-plus ms-2" style="color:var(--gov-secondary);"></i> إنشاء موظف مكتب
+                </h4>
+
+                <form asp-action="CreateEmployee" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="alert alert-gov-danger" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
+                    <input asp-for="GovernorateId" type="hidden" value="@governorateId">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FullName" class="form-label fw-semibold">الاسم بالكامل</label>
+                            <input asp-for="FullName" class="form-control">
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="UserName" class="form-label fw-semibold">اسم المستخدم</label>
+                            <input asp-for="UserName" class="form-control">
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="NationalID" class="form-label fw-semibold">الرقم القومي</label>
+                            <input asp-for="NationalID" class="form-control" maxlength="14">
+                            <span asp-validation-for="NationalID" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold">البريد الإلكتروني</label>
+                            <input asp-for="Email" class="form-control">
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EGPhoneNumber" class="form-label fw-semibold">رقم الموبايل</label>
+                            <input asp-for="EGPhoneNumber" class="form-control" maxlength="11">
+                            <span asp-validation-for="EGPhoneNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="OfficeId" class="form-label fw-semibold">المكتب</label>
+                            <select asp-for="OfficeId" class="form-select">
+                                <option value="">اختر المكتب</option>
+                                @foreach (var office in offices)
+                                {
+                                    <option value="@office.OfficeId">@office.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="OfficeId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Gender" class="form-label fw-semibold">النوع</label>
+                            <select asp-for="Gender" class="form-select">
+                                <option value="1">ذكر</option>
+                                <option value="2">أنثى</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="MaritalStatus" class="form-label fw-semibold">الحالة الاجتماعية</label>
+                            <select asp-for="MaritalStatus" class="form-select">
+                                <option value="1">أعزب</option>
+                                <option value="2">متزوج</option>
+                                <option value="3">مطلق</option>
+                                <option value="4">أرمل</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PassWord" class="form-label fw-semibold">كلمة المرور</label>
+                            <input asp-for="PassWord" type="password" class="form-control">
+                            <span asp-validation-for="PassWord" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">تأكيد كلمة المرور</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control">
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4 pt-3" style="border-top:1px solid var(--gov-border);">
+                        <a asp-action="Employees" class="btn btn-gov-outline">
+                            <i class="bi bi-arrow-right ms-1"></i> رجوع
+                        </a>
+                        <button type="submit" class="btn btn-gov-gold">
+                            <i class="bi bi-person-plus ms-1"></i> إنشاء موظف
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

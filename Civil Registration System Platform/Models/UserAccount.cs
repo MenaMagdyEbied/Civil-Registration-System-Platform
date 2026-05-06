@@ -8,7 +8,7 @@ namespace Civil_Registration_System_Platform.Models
         [StringLength(100, MinimumLength = 3)]
         public string FullName { get; set; }
         [StringLength(11, MinimumLength = 11)]
-        [RegularExpression(@"^01[0-2,5][0-9]{8}$", ErrorMessage = "Invalid Egyptian phone number")]
+        [RegularExpression(@"^01[0-2,5][0-9]{8}$", ErrorMessage = "رقم الموبايل المصري غير صحيح")]
         public string EGPhoneNumber { get; set; }
         [StringLength(14, MinimumLength = 14)]
         public string NationalID { get; set; }

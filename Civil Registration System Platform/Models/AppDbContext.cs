@@ -48,6 +48,12 @@ namespace Civil_Registration_System_Platform.Models
                 Id = "4",
                 Name = "User",
                 NormalizedName = "USER"
+            },
+            new IdentityRole
+            {
+                Id = "5",
+                Name = "AccountReviewer",
+                NormalizedName = "ACCOUNTREVIEWER"
             }
             );
 
@@ -86,6 +92,39 @@ namespace Civil_Registration_System_Platform.Models
             {
                 UserId = "1",
                 RoleId = "1"
+            });
+            #endregion
+
+            #region seed AccountReviewer Account
+            // مسؤول مراجعة حسابات المواطنين الجديدة
+            // ─── Login: acrev@crs.gov.eg / Reviewer@123 ───
+            var reviewer = new UserAccount
+            {
+                Id = "2",
+                UserName = "acrev",
+                NormalizedUserName = "ACREV",
+                Email = "acrev@crs.gov.eg",
+                NormalizedEmail = "ACREV@CRS.GOV.EG",
+                EmailConfirmed = true,
+
+                FullName = "مراجع الحسابات",
+                EGPhoneNumber = "01000000001",
+                NationalID = "12345678901235",
+                Gender = 1,
+                MaritalStatus = 1,
+                IsConfirmed = true,
+                CardImagePath = "default.png",
+                CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
+                IsRejected = false,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+            reviewer.PasswordHash = hasher.HashPassword(reviewer, "Reviewer@123");
+            modelBuilder.Entity<UserAccount>().HasData(reviewer);
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
+            {
+                UserId = "2",
+                RoleId = "5"
             });
             #endregion
 
@@ -354,6 +393,165 @@ namespace Civil_Registration_System_Platform.Models
 );
             #endregion
 
+            #region seed ServicesTypeHelper (الأسعار + المدد + المستندات المطلوبة)
+            // البيانات مطابقة للـ JS frontend (apply.html / app.js)
+            // SuperAdmin يقدر يعدّلها بعد كده عبر صفحة Pricing
+            // ─── الفصل بين المستندات بـ '|' — ApplyFormService.ParseRequiredDocs بيقسمها ───
+            modelBuilder.Entity<ServicesTypeHelper>().HasData(
+                // ─── شهادة الميلاد (1) ─────────────────────────────────
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.BirthCertificate,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 63, DurationInDays = 0,
+                    Details = "الرقم القومي|اسم الأم الثلاثي"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.BirthCertificate,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.RegisterNewBirth,
+                    Price = 0, DurationInDays = 0,
+                    Details = "إشعار ولادة من المستشفى|بطاقة ولي الأمر"
+                },
+
+                // ─── شهادة الوفاة (2) ─────────────────────────────────
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.DeathCertificate,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 63, DurationInDays = 1,
+                    Details = "تقرير طبي|إشعار الوفاة من المستشفى"
+                },
+
+                // ─── قسيمة الزواج (3) ─────────────────────────────────
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.MarriageCertificate,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 63, DurationInDays = 1,
+                    Details = "بيانات الزوج والزوجة (ثلاثي-رباعي)|تاريخ الزواج"
+                },
+
+                // ─── قسيمة الطلاق (4) ─────────────────────────────────
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.DivorceCertificate,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 63, DurationInDays = 1,
+                    Details = "بيانات الزوج والزوجة|تاريخ الطلاق"
+                },
+
+                // ─── بطاقة الرقم القومي (5) ───────────────────────────
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.NationalId,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 75, DurationInDays = 7,
+                    Details = "شهادة ميلاد مميكنة|عدد 2 صورة شخصية|قيد عائلي أو إثبات إقامة"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.NationalId,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Renewal,
+                    Price = 75, DurationInDays = 7,
+                    Details = "البطاقة القديمة|عدد 2 صورة شخصية"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.NationalId,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Replacement,
+                    Price = 315, DurationInDays = 7,
+                    Details = "محضر فقدان|عدد 2 صورة شخصية"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.NationalId,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Damaged,
+                    Price = 265, DurationInDays = 7,
+                    Details = "البطاقة التالفة|عدد 2 صورة شخصية"
+                },
+
+                // ─── جواز السفر (6) ───────────────────────────────────
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.Passport,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 500, DurationInDays = 7,
+                    Details = "بطاقة قومي سارية|عدد 4 صور شخصية|شهادة موقف التجنيد (للذكور)"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.Passport,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Renewal,
+                    Price = 500, DurationInDays = 7,
+                    Details = "الجواز القديم|بطاقة قومي سارية|عدد 4 صور شخصية"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.Passport,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Replacement,
+                    Price = 600, DurationInDays = 7,
+                    Details = "محضر فقدان|بطاقة قومي سارية|عدد 4 صور شخصية|شهادة موقف التجنيد (للذكور)"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.Passport,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Damaged,
+                    Price = 500, DurationInDays = 7,
+                    Details = "الجواز التالف|بطاقة قومي سارية"
+                },
+
+                // ─── قيد عائلي (8) ────────────────────────────────────
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.FamilyCard,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 63, DurationInDays = 1,
+                    Details = "الرقم القومي|اسم رب الأسرة"
+                },
+
+                // ─── قيد فردي (9) ─────────────────────────────────────
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.IndividualRecord,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 63, DurationInDays = 1,
+                    Details = "الرقم القومي"
+                },
+
+                // ─── رخصة القيادة (10) ────────────────────────────────
+                // ملاحظة: في مصر الكشف الطبي بيشمل اختبار النظر — مفيش اختبار نظر منفصل
+                // الخطوات: تقديم → مراجعة → كشف طبي → نظري → عملي → دفع → إصدار
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.DriversLicense,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.New,
+                    Price = 1140, DurationInDays = 14,
+                    Details = "بطاقة قومي + مؤهل دراسي|عدد 2 صورة شخصية|إثبات إقامة"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.DriversLicense,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Renewal,
+                    Price = 1105, DurationInDays = 14,
+                    Details = "الرخصة القديمة|شهادة براءة ذمة"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.DriversLicense,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Replacement,
+                    Price = 265, DurationInDays = 14,
+                    Details = "بطاقة قومي|محضر فقدان|شهادة براءة ذمة"
+                },
+                new ServicesTypeHelper
+                {
+                    ServicesTypeEnum    = (int)Enums.ServiceType.DriversLicense,
+                    ApplicationTypeEnum = (int)Enums.ApplicationType.Damaged,
+                    Price = 215, DurationInDays = 14,
+                    Details = "بطاقة قومي|الرخصة التالفة|شهادة براءة ذمة"
+                }
+            );
+            #endregion
 
         }
         public DbSet<UserAccount> UserAccounts { get; set; }

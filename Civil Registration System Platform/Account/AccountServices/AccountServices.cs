@@ -27,6 +27,15 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
 
         public async Task<string> RegisterUserAsync(RegisterViewModel registerViewModel)
         {
+            if (await _userManager.FindByNameAsync(registerViewModel.UserName) != null)
+                return "اسم المستخدم مستخدم بالفعل. اختر اسم مستخدم آخر.";
+
+            if (await _userManager.FindByEmailAsync(registerViewModel.Email) != null)
+                return "البريد الإلكتروني مستخدم بالفعل.";
+
+            if (await _userManager.Users.AnyAsync(u => u.NationalID == registerViewModel.NationalID))
+                return "الرقم القومي مستخدم بالفعل.";
+
             UserAccount userAccount = new UserAccount
             {
                 UserName = registerViewModel.UserName,
@@ -51,7 +60,7 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
             }
             else
             {
-                string errors = "User Registration Failed: ";
+                string errors = "فشل تسجيل المستخدم: ";
                 foreach (var ErrorItem in result.Errors)
                 {
                     errors += ErrorItem.Description + " , ";
@@ -73,7 +82,7 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
                 MaritalStatus = registerEmployeeViewModel.MaritalStatus,
                 GovernorateId = registerEmployeeViewModel.GovernorateId,
                 OfficeId = registerEmployeeViewModel.OfficeId,
-                ManageOfficeId = registerEmployeeViewModel.ManagerOfficeId,
+                ManageOfficeId = null,
                 IsConfirmed = true  
             };
             userAccount = await CreateUserImage(registerEmployeeViewModel.CardImage, userAccount);
@@ -86,7 +95,7 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
             }
             else
             {
-                string errors = "Employee Registration Failed: ";
+                string errors = "فشل تسجيل الموظف: ";
                 foreach (var ErrorItem in result.Errors)
                 {
                     errors += ErrorItem.Description + " , ";
@@ -108,8 +117,8 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
                 Gender = registerAdminViewModel.Gender,
                 MaritalStatus = registerAdminViewModel.MaritalStatus,
                 GovernorateId = registerAdminViewModel.GovernorateId,
-                OfficeId = registerAdminViewModel.OfficeId,
-                ManageOfficeId = registerAdminViewModel.ManagerOfficeId,
+                OfficeId = null,
+                ManageOfficeId = null,
                 IsConfirmed = true
             };
             
@@ -123,7 +132,7 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
             }
             else
             {
-                string errors = "Admin Registration Failed: ";
+                string errors = "فشل تسجيل الأدمن: ";
                 foreach (var ErrorItem in result.Errors)
                 {
                     errors += ErrorItem.Description + " , ";
@@ -133,20 +142,25 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
         }
 
         public async Task<string> LoginUserAsync(LoginViewModel loginViewModel)
-        {           
-            UserAccount? userAccount = await _userManager.FindByNameAsync(loginViewModel.UserName);
-            if (userAccount != null)
-            {
-                bool found = await _userManager.CheckPasswordAsync(userAccount, loginViewModel.PassWord);
-                if (found)
-                {
-                    await _signInManager.SignInAsync(userAccount, true);
-                    return "Login Successful";  
-                }
-            else
+        {
+       
+            UserAccount? userAccount =
+                   await _userManager.FindByNameAsync(loginViewModel.UserName)
+                ?? await _userManager.FindByEmailAsync(loginViewModel.UserName)
+                ?? await _userManager.Users.FirstOrDefaultAsync(u => u.NationalID == loginViewModel.UserName);
+
+            if (userAccount == null)
                 return "username or password worng";
-            }
-            return "username or password worng";
+
+            bool passwordOk = await _userManager.CheckPasswordAsync(userAccount, loginViewModel.PassWord);
+            if (!passwordOk)
+                return "username or password worng";
+
+            if (userAccount.IsRejected)
+                return $"تم رفض حسابك: {userAccount.RejectionMessage ?? "تواصل مع الإدارة"}";
+
+            await _signInManager.SignInAsync(userAccount, true);
+            return "Login Successful";
         }
 
 
@@ -209,7 +223,7 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
             userAccount.RejectionMessage = null;
 
             await _userAccountRepository.SaveUser(userAccount); 
-            return "Account Updated Successfully";
+            return "تم تحديث الحساب بنجاح";
         }
 
 
@@ -245,8 +259,14 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
         // creating image 
 
 
-        public async Task<UserAccount> CreateUserImage(IFormFile cardImg, UserAccount userAccount)
+        public async Task<UserAccount> CreateUserImage(IFormFile? cardImg, UserAccount userAccount)
         {
+            if (cardImg == null || cardImg.Length == 0)
+            {
+                userAccount.CardImagePath = userAccount.CardImagePath ?? string.Empty;
+                return userAccount;
+            }
+
             string ext = Checking(cardImg);
             string fileName = await Create(cardImg, ext);
             userAccount.CardImagePath = $"/AccountCardImages/{fileName}";
@@ -259,17 +279,17 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
         {
 
             if (img == null || img.Length == 0)
-                throw new Exception("No image uploaded");
+                throw new Exception("لم يتم رفع صورة");
 
             // 2️⃣ تحقق من الامتداد
             var allowedExt = new[] { ".jpg", ".jpeg", ".png" };
             var ext = Path.GetExtension(img.FileName).ToLower();
             if (!allowedExt.Contains(ext))
-                throw new Exception("Invalid image type");
+                throw new Exception("نوع الصورة غير مسموح");
 
             //    // 1️⃣ تحقق من الحجم (1MB)
             if (img.Length > 1024 * 1024 * 5)
-                throw new Exception("Max image size is 5MB");
+                throw new Exception("الحد الأقصى لحجم الصورة هو 5 ميجابايت");
 
 
             return ext;

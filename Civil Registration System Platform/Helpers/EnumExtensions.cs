@@ -24,12 +24,13 @@ namespace Civil_Registration_System_Platform.Helpers
         public static string ToArabicName(this ApplicationType appType) =>
             appType switch
             {
-                ApplicationType.New => "جديد",
-                ApplicationType.Renewal => "تجديد",
-                ApplicationType.Replacement => "بدل فاقد",
-                ApplicationType.Damaged => "بدل تالف",
-                ApplicationType.Correction => "تصحيح بيانات",
-                _ => "غير معروف"
+                ApplicationType.New              => "جديد",
+                ApplicationType.Renewal          => "تجديد",
+                ApplicationType.Replacement      => "بدل فاقد",
+                ApplicationType.Damaged          => "بدل تالف",
+                ApplicationType.Correction       => "تصحيح بيانات",
+                ApplicationType.RegisterNewBirth => "تسجيل ميلاد جديد",
+                _                                => "غير معروف"
             };
 
         public static string ToArabicName(this ApplicationStatus status) =>

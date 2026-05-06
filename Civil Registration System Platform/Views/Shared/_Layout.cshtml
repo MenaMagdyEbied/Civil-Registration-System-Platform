@@ -1,50 +1,247 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+@{
+    var user = User?.Identity?.IsAuthenticated == true ? User : null;
+    var isSuperAdmin = User?.IsInRole("SuperAdmin") == true;
+    var isAdmin      = User?.IsInRole("Admin") == true;
+    var isEmployee   = User?.IsInRole("Employee") == true;
+    var isReviewer   = User?.IsInRole("AccountReviewer") == true;
+    var isCitizen    = User?.IsInRole("User") == true;
+    var displayName  = User?.Identity?.Name ?? "";
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Civil_Registration_System_Platform</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Civil_Registration_System_Platform.styles.css" asp-append-version="true" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - نظام التسجيل المدني</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Civil_Registration_System_Platform</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+
+    <!-- ===== TOP BAR ===== -->
+    <div class="gov-topbar d-none d-md-block">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-4 align-items-center">
+                    <a href="tel:15444"><i class="bi bi-telephone-fill me-1"></i> 15444</a>
+                    <a href="mailto:support@crs.gov.eg"><i class="bi bi-envelope-fill me-1"></i> support@crs.gov.eg</a>
+                    <span><i class="bi bi-geo-alt-fill me-1"></i> القاهرة، مصر</span>
+                </div>
+                <div class="d-flex gap-3 align-items-center">
+                    <span style="font-weight:600;">جمهورية مصر العربية</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="gov-navbar navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-icon">🏛️</span>
+                <div>
+                    <div>نظام التسجيل المدني</div>
+                    <div style="font-size:0.7rem;font-weight:400;opacity:0.7;">جمهورية مصر العربية</div>
+                </div>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false">
+                <i class="bi bi-list" style="color:#fff;font-size:1.5rem;"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index" asp-fragment="services">الخدمات</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index" asp-fragment="fees">الرسوم</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Track">تتبع طلب</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex gap-2 nav-buttons">
+                    @if (user != null)
+                    {
+                        <span class="d-none d-md-inline" style="color:rgba(255,255,255,0.85);font-weight:600;font-size:0.9rem;">
+                            @if (isSuperAdmin)
+                            {
+                                <i class="bi bi-shield-fill-check ms-1" style="color:var(--gov-secondary);"></i><text>سوبر أدمن</text>
+                            }
+                            else if (isAdmin)
+                            {
+                                <i class="bi bi-shield-check ms-1" style="color:var(--gov-red);"></i><text>أدمن</text>
+                            }
+                            else if (isEmployee)
+                            {
+                                <i class="bi bi-person-workspace ms-1"></i><text>موظف</text>
+                            }
+                            else
+                            {
+                                <i class="bi bi-person-circle ms-1"></i>
+                            }
+                            <text> </text>@displayName
+                        </span>
+
+                        @if (isSuperAdmin)
+                        {
+                            <a asp-controller="SuperAdmin" asp-action="Index" class="btn btn-gov-gold btn-sm">
+                                <i class="bi bi-speedometer2 ms-1"></i> لوحة السوبر أدمن
+                            </a>
+                        }
+                        else if (isAdmin || isEmployee)
+                        {
+                            <a asp-controller="Admin" asp-action="Index" class="btn btn-gov-gold btn-sm">
+                                <i class="bi bi-speedometer2 ms-1"></i> لوحة التحكم
+                            </a>
+                        }
+                        else if (isReviewer)
+                        {
+                            <a asp-controller="Admin" asp-action="UnconfirmedUsers" class="btn btn-gov-gold btn-sm">
+                                <i class="bi bi-person-check ms-1"></i> Account review
+                            </a>
+                        }
+                        else if (isCitizen)
+                        {
+                            <a asp-controller="Dashboard" asp-action="Index" class="btn btn-gov-gold btn-sm">
+                                <i class="bi bi-speedometer2 ms-1"></i> لوحتي
+                            </a>
+                        }
+
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-gov-outline btn-sm">
+                                <i class="bi bi-box-arrow-left ms-1"></i> خروج
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a class="btn btn-gov-outline btn-sm" asp-controller="Account" asp-action="Login">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> تسجيل الدخول
+                        </a>
+                        <a class="btn btn-gov-gold btn-sm" asp-controller="Account" asp-action="Register">
+                            <i class="bi bi-person-plus me-1"></i> حساب جديد
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== ALERTS ===== -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="container mt-3">
+            <div class="alert alert-gov-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle ms-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="container mt-3">
+            <div class="alert alert-gov-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle ms-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    }
+    @if (TempData["Info"] != null)
+    {
+        <div class="container mt-3">
+            <div class="alert alert-gov-info alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle ms-2"></i>@TempData["Info"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    }
+
+    <!-- ===== MAIN ===== -->
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="gov-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div style="width:40px;height:40px;border-radius:50%;background:var(--gov-secondary);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🏛️</div>
+                        <div>
+                            <div style="font-weight:800;color:var(--gov-white);font-size:1rem;">نظام التسجيل المدني</div>
+                            <div style="font-size:0.75rem;opacity:0.6;">جمهورية مصر العربية</div>
+                        </div>
+                    </div>
+                    <p style="font-size:0.85rem;line-height:1.8;color:rgba(255,255,255,0.6);">
+                        منصة إلكترونية موحدة تابعة لوزارة الداخلية المصرية، تهدف إلى رقمنة وتسهيل الوصول لجميع خدمات الأحوال المدنية.
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>روابط سريعة</h5>
+                    <ul>
+                        <li><a asp-controller="Home" asp-action="Index"><i class="bi bi-chevron-left"></i> الرئيسية</a></li>
+                        <li><a asp-controller="Home" asp-action="Track"><i class="bi bi-chevron-left"></i> تتبع طلب</a></li>
+                        <li><a asp-controller="Account" asp-action="Login"><i class="bi bi-chevron-left"></i> تسجيل الدخول</a></li>
+                        <li><a asp-controller="Account" asp-action="Register"><i class="bi bi-chevron-left"></i> حساب جديد</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5>الخدمات</h5>
+                    <ul>
+                        <li><a asp-controller="Apply" asp-action="Index" asp-route-serviceType="@((int)ServiceType.BirthCertificate)"><i class="bi bi-chevron-left"></i> شهادة الميلاد</a></li>
+                        <li><a asp-controller="Apply" asp-action="Index" asp-route-serviceType="@((int)ServiceType.NationalId)"><i class="bi bi-chevron-left"></i> الرقم القومي</a></li>
+                        <li><a asp-controller="Apply" asp-action="Index" asp-route-serviceType="@((int)ServiceType.Passport)"><i class="bi bi-chevron-left"></i> جواز السفر</a></li>
+                        <li><a asp-controller="Apply" asp-action="Index" asp-route-serviceType="@((int)ServiceType.DriversLicense)"><i class="bi bi-chevron-left"></i> رخصة القيادة</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>تواصل معنا</h5>
+                    <ul>
+                        <li><a href="tel:15444"><i class="bi bi-telephone"></i> 15444</a></li>
+                        <li><a href="mailto:support@crs.gov.eg"><i class="bi bi-envelope"></i> support@crs.gov.eg</a></li>
+                        <li><span style="color:rgba(255,255,255,0.6);font-size:0.88rem;"><i class="bi bi-geo-alt"></i> القاهرة، مصر</span></li>
                     </ul>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Civil_Registration_System_Platform - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="footer-bottom">
+                <p class="mb-0">© @DateTime.Now.Year نظام التسجيل المدني - جمهورية مصر العربية. جميع الحقوق محفوظة.</p>
+            </div>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <button class="scroll-top-btn" title="العودة للأعلى"><i class="bi bi-chevron-up"></i></button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ===== Scroll-to-top =====
+        var scrollTopBtn = document.querySelector('.scroll-top-btn');
+        if (scrollTopBtn) {
+            window.addEventListener('scroll', function () {
+                scrollTopBtn.classList.toggle('show', window.scrollY > 400);
+            });
+            scrollTopBtn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        }
+        // ===== Fade-up animations =====
+        var fadeEls = document.querySelectorAll('.fade-up');
+        function checkFade() {
+            fadeEls.forEach(function (el) {
+                if (el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add('visible');
+            });
+        }
+        window.addEventListener('scroll', checkFade, { passive: true });
+        checkFade();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,0 +1,64 @@
+@model IEnumerable<ApplicationSummaryAdminVM>
+@{
+    ViewData["Title"] = "الطلبات";
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h4 style="font-weight:800;color:var(--gov-primary);margin:0;">
+                <i class="bi bi-list-check ms-2" style="color:var(--gov-secondary);"></i> طلبات المكتب
+            </h4>
+            <a asp-action="Index" class="btn btn-gov-outline btn-sm">
+                <i class="bi bi-arrow-right ms-1"></i> العودة للوحة
+            </a>
+        </div>
+
+        <form method="get" class="d-flex gap-2 flex-wrap mb-3">
+            <select name="status" class="form-select form-select-sm" style="width:auto;">
+                <option value="">جميع الحالات</option>
+                @foreach (ApplicationStatus s in Enum.GetValues(typeof(ApplicationStatus)))
+                { <option value="@s">@s.ToArabicName()</option> }
+            </select>
+            <select name="serviceType" class="form-select form-select-sm" style="width:auto;">
+                <option value="">جميع الخدمات</option>
+                @foreach (ServiceType st in Enum.GetValues(typeof(ServiceType)))
+                { <option value="@st">@st.ToArabicName()</option> }
+            </select>
+            <button type="submit" class="btn btn-gov-primary btn-sm">تصفية</button>
+        </form>
+
+        <div class="table-responsive">
+            <table class="fee-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th><th>المتقدم</th><th>الرقم القومي</th>
+                        <th>الخدمة</th><th>النوع</th><th>الحالة</th><th>التاريخ</th><th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    { <tr><td colspan="8" class="text-center py-4">لا توجد طلبات</td></tr> }
+                    else
+                    {
+                        foreach (var a in Model)
+                        {
+                            <tr>
+                                <td style="font-weight:600;" dir="ltr">@a.ApplicationNumber</td>
+                                <td>@a.ApplicantName</td>
+                                <td dir="ltr">@a.ApplicantNationalId</td>
+                                <td>@a.ServiceTypeName</td>
+                                <td>@a.ApplicationTypeName</td>
+                                <td><span style="color:@a.StatusColor;font-weight:700;">@a.StatusName</span></td>
+                                <td>@a.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td><a asp-action="Review" asp-route-id="@a.ApplicationId" class="btn btn-gov-primary btn-sm" style="padding:4px 12px;font-size:0.8rem;border-radius:8px;">مراجعة</a></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

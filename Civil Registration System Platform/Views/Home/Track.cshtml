@@ -1,5 +1,87 @@
-﻿@{
-    ViewData["Title"] = "Home";
+@model TrackVM
+@{
+    ViewData["Title"] = "تتبع الطلب";
 }
-<h1>@ViewData["Title"]</h1>
 
+<!-- Breadcrumb -->
+<section style="background:var(--gov-white);padding:15px 0;border-bottom:1px solid var(--gov-border);">
+    <div class="container">
+        <nav>
+            <ol class="breadcrumb mb-0" style="font-size:0.88rem;">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" style="color:var(--gov-text-light);text-decoration:none;">الرئيسية</a></li>
+                <li class="breadcrumb-item active" style="color:var(--gov-primary);font-weight:600;">تتبع الطلب</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<section class="track-section">
+    <div class="container">
+        <div class="track-card fade-up">
+            <div class="text-center mb-4">
+                <div style="width:80px;height:80px;border-radius:50%;background:rgba(200,164,21,0.15);display:inline-flex;align-items:center;justify-content:center;margin-bottom:15px;">
+                    <i class="bi bi-search" style="font-size:2rem;color:var(--gov-secondary);"></i>
+                </div>
+                <h3 style="font-weight:800;color:var(--gov-white);">تتبع طلبك</h3>
+                <p style="color:rgba(255,255,255,0.65);">أدخل رقم الطلب لمعرفة حالة المعاملة</p>
+            </div>
+
+            <form asp-controller="Home" asp-action="Track" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <input asp-for="ApplicationNumber" class="form-control" placeholder="مثال: CRS-2025-0042" style="text-align:center;" autocomplete="off">
+                    <span asp-validation-for="ApplicationNumber" class="text-danger small"></span>
+                </div>
+                <button type="submit" class="btn btn-gov-gold w-100">
+                    <i class="bi bi-search ms-2"></i> بحث
+                </button>
+            </form>
+        </div>
+
+        @if (Model.Result != null)
+        {
+            <div class="track-result show mt-4">
+                @await Html.PartialAsync("_TrackResultPartial", Model.Result)
+            </div>
+        }
+    </div>
+</section>
+
+<section class="py-5" style="background:var(--gov-white);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-4 fade-up">
+                    <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:8px;">كيف تجد رقم الطلب؟</h4>
+                    <p style="color:var(--gov-text-light);">رقم الطلب هو المعرف الفريد لمعاملتك في النظام</p>
+                </div>
+                <div class="card fade-up" style="border-radius:16px;border:1px solid var(--gov-border);box-shadow:var(--gov-card-shadow);">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-start gap-3 mb-3">
+                            <div style="width:40px;height:40px;border-radius:10px;background:#e3f2fd;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi bi-upc-scan" style="color:#1565c0;font-size:1.1rem;"></i>
+                            </div>
+                            <div>
+                                <h6 style="font-weight:700;color:var(--gov-primary);margin-bottom:4px;">صيغة رقم الطلب</h6>
+                                <p style="color:var(--gov-text-light);font-size:0.88rem;margin:0;">
+                                    رقم الطلب يتكون من <strong style="color:var(--gov-secondary);">CRS-السنة-XXXX</strong>
+                                </p>
+                            </div>
+                        </div>
+                        <hr style="border-color:var(--gov-border);margin:20px 0;">
+                        <div class="text-center">
+                            <p style="color:var(--gov-text-light);font-size:0.85rem;margin-bottom:8px;">مثال على رقم الطلب:</p>
+                            <div style="background:var(--gov-light);border:2px dashed var(--gov-border);border-radius:10px;padding:12px 24px;display:inline-block;direction:ltr;">
+                                <span style="font-weight:800;font-size:1.2rem;color:var(--gov-secondary);letter-spacing:2px;">CRS-2025-0042</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

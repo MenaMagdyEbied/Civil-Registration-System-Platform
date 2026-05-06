@@ -1,0 +1,131 @@
+@model AdminDashboardVM
+@{
+    ViewData["Title"] = "لوحة الأدمن";
+}
+
+<main class="container py-4">
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#e3f2fd;color:#1565c0;"><i class="bi bi-file-earmark-text"></i></div>
+                    <div>
+                        <div style="font-size:1.5rem;font-weight:800;color:#0d2137;">@Model.TodayApplications</div>
+                        <div style="font-size:0.82rem;color:#6c757d;font-weight:600;">طلبات اليوم</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#fff8e1;color:#c8a415;"><i class="bi bi-hourglass-split"></i></div>
+                    <div>
+                        <div style="font-size:1.5rem;font-weight:800;color:#0d2137;">@Model.PendingReview</div>
+                        <div style="font-size:0.82rem;color:#6c757d;font-weight:600;">بانتظار المراجعة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#e8f5e9;color:#1a7a3a;"><i class="bi bi-check-circle"></i></div>
+                    <div>
+                        <div style="font-size:1.5rem;font-weight:800;color:#0d2137;">@Model.IssuedToday</div>
+                        <div style="font-size:0.82rem;color:#6c757d;font-weight:600;">تم الإصدار</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#ffebee;color:#c41e3a;"><i class="bi bi-x-circle"></i></div>
+                    <div>
+                        <div style="font-size:1.5rem;font-weight:800;color:#0d2137;">@Model.RejectedToday</div>
+                        <div style="font-size:0.82rem;color:#6c757d;font-weight:600;">مرفوضة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-2 mb-4">
+        <div class="col-md-3"><a asp-action="Applications" class="btn btn-gov-outline w-100"><i class="bi bi-list-check ms-1"></i> كل الطلبات</a></div>
+        <div class="col-md-3"><a asp-action="Schedule" class="btn btn-gov-outline w-100"><i class="bi bi-calendar3 ms-1"></i> المواعيد</a></div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-md-3"><a asp-action="Employees" class="btn btn-gov-outline w-100"><i class="bi bi-people ms-1"></i> الموظفين</a></div>
+            <div class="col-md-3"><a asp-action="UnconfirmedUsers" class="btn btn-gov-outline w-100"><i class="bi bi-person-check ms-1"></i> اعتماد المواطنين</a></div>
+        }
+    </div>
+
+    <!-- Filter + Applications Table -->
+    <div class="bg-white rounded-3 shadow-sm p-4 mb-4" style="border:1px solid var(--gov-border);">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h5 style="font-weight:700;color:var(--gov-primary);margin:0;">
+                <i class="bi bi-table ms-2" style="color:var(--gov-secondary);"></i> الطلبات
+            </h5>
+
+            <form method="get" class="d-flex gap-2 flex-wrap">
+                <select name="status" class="form-select form-select-sm" style="width:auto;">
+                    <option value="">جميع الحالات</option>
+                    @foreach (ApplicationStatus s in Enum.GetValues(typeof(ApplicationStatus)))
+                    {
+                        <option value="@s" selected="@(Model.FilterStatus == s)">@s.ToArabicName()</option>
+                    }
+                </select>
+                <select name="serviceType" class="form-select form-select-sm" style="width:auto;">
+                    <option value="">جميع الخدمات</option>
+                    @foreach (ServiceType st in Enum.GetValues(typeof(ServiceType)))
+                    {
+                        <option value="@st" selected="@(Model.FilterService == st)">@st.ToArabicName()</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-gov-primary btn-sm">تصفية</button>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="fee-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>اسم المتقدم</th>
+                        <th>الخدمة</th>
+                        <th>نوع الطلب</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Applications.Any())
+                    {
+                        <tr><td colspan="7" class="text-center py-4">لا توجد طلبات</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var app in Model.Applications)
+                        {
+                            <tr>
+                                <td style="font-weight:600;" dir="ltr">@app.ApplicationNumber</td>
+                                <td>@app.ApplicantName</td>
+                                <td>@app.ServiceTypeName</td>
+                                <td>@app.ApplicationTypeName</td>
+                                <td><span style="color:@app.StatusColor;font-weight:700;">@app.StatusName</span></td>
+                                <td>@app.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <a asp-action="Review" asp-route-id="@app.ApplicationId" class="btn btn-gov-primary btn-sm" style="padding:4px 14px;font-size:0.8rem;border-radius:8px;">مراجعة</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

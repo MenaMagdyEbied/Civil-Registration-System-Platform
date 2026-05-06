@@ -1,5 +1,18 @@
-﻿@{
-    ViewData["Title"] = "Track Result";
+@model ApplicationTrackResultVM
+@{
+    ViewData["Title"] = "نتيجة التتبع";
 }
-<h1>@ViewData["Title"]</h1>
 
+<section class="track-section">
+    <div class="container">
+        <div class="track-result show">
+            @await Html.PartialAsync("_TrackResultPartial", Model)
+
+            <div class="text-center mt-4">
+                <a asp-controller="Home" asp-action="Track" class="btn btn-gov-outline">
+                    <i class="bi bi-arrow-right ms-1"></i> تتبع طلب آخر
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,5 +1,6 @@
 ﻿using Civil_Registration_System_Platform.Account.AccountRepository;
 using Civil_Registration_System_Platform.Account.AccountViewModel;
+using Civil_Registration_System_Platform.ViewModel;
 
 namespace Civil_Registration_System_Platform.Account.AccountServices
 {
@@ -39,30 +40,66 @@ namespace Civil_Registration_System_Platform.Account.AccountServices
         {
             UserAccount? userAccount =await _userAccountRepository.GetById(userId);
             if (userAccount == null)
-                throw new Exception("User not found");
+                throw new Exception("لم يتم العثور على المستخدم");
 
             userAccount.IsConfirmed = true;
 
             await _userAccountRepository.SaveUser(userAccount);
 
-            return "Confirmed successfully";    
+            return "تم اعتماد الحساب بنجاح";    
         }
 
         public async Task<string> RejectUser(string userId , string? messageReject)
         {
             UserAccount? userAccount = await _userAccountRepository.GetById(userId);
             if (userAccount == null)
-                throw new Exception("User not found");
+                throw new Exception("لم يتم العثور على المستخدم");
 
             userAccount.IsConfirmed = false;
             userAccount.IsRejected = true;
 
-            userAccount.RejectionMessage = messageReject ?? "Your request has been rejected.";
+            userAccount.RejectionMessage = messageReject ?? "تم رفض طلبك.";
             await _userAccountRepository.SaveUser(userAccount);
 
-            return "Rejected successfully";
+            return "تم رفض الحساب بنجاح";
         }
 
-        
+
+        public async Task<List<OfficeUserListItemVM>> GetConfirmedUsersByOfficeAsync(int officeId)
+        {
+            var users = await _userAccountRepository.GetConfirmedUsersByOfficeAsync(officeId);
+            return users.Select(MapToVM).ToList();
+        }
+
+        public async Task<List<OfficeUserListItemVM>> GetRejectedUsersByOfficeAsync(int officeId)
+        {
+            var users = await _userAccountRepository.GetRejectedUsersByOfficeAsync(officeId);
+            return users.Select(MapToVM).ToList();
+        }
+
+        public async Task<List<OfficeUserListItemVM>> GetAllUsersByOfficeAsync(int officeId)
+        {
+            var users = await _userAccountRepository.GetAllUsersByOfficeAsync(officeId);
+            return users.Select(MapToVM).ToList();
+        }
+
+        // ───── helper ─────
+        private static OfficeUserListItemVM MapToVM(UserAccount u) => new()
+        {
+            UserId           = u.Id,
+            FullName         = u.FullName,
+            Email            = u.Email ?? string.Empty,
+            EGPhoneNumber    = u.EGPhoneNumber,
+            NationalID       = u.NationalID,
+            CardImagePath    = u.CardImagePath,
+            Gender           = u.Gender,
+            MaritalStatus    = u.MaritalStatus,
+            CreatedAt        = u.CreatedAt,
+            GovernorateName  = u.Governorate?.Name,
+            OfficeName       = u.Office?.Name,
+            IsConfirmed      = u.IsConfirmed,
+            IsRejected       = u.IsRejected,
+            RejectionMessage = u.RejectionMessage
+        };
     }
 }

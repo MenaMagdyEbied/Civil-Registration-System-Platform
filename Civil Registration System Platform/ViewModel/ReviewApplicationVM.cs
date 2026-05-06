@@ -1,4 +1,4 @@
-﻿using Civil_Registration_System_Platform.ViewModel.Application;
+using Civil_Registration_System_Platform.ViewModel.Application;
 
 namespace Civil_Registration_System_Platform.ViewModel
 {
@@ -17,6 +17,7 @@ namespace Civil_Registration_System_Platform.ViewModel
         public string ApplicantGovernorateName { get; set; }
 
         public string OfficeName { get; set; }
+        public int OfficeId { get; set; }
 
         public List<DocumentVM> Documents { get; set; }
 

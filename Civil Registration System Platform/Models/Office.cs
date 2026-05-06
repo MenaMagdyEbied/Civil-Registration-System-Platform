@@ -9,7 +9,7 @@ namespace Civil_Registration_System_Platform.Models
         public string Name { get; set; }
 
         [StringLength(11, MinimumLength = 11)]
-        [RegularExpression(@"^01[0-2,5][0-9]{8}$", ErrorMessage = "Invalid Egyptian phone number")]
+        [RegularExpression(@"^01[0-2,5][0-9]{8}$", ErrorMessage = "رقم الموبايل المصري غير صحيح")]
         public string Phone { get; set; }        
         public bool IsActive { get; set; }
        

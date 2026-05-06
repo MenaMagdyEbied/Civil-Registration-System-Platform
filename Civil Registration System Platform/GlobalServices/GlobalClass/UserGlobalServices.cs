@@ -18,9 +18,9 @@ namespace Civil_Registration_System_Platform.GlobalServices.GlobalClass
         {
             var user = _httpContextAccessor.HttpContext?.User;
             if (user == null) throw new Exception("Not found this User");
-            string? userName = _userManager.GetUserId(user);
-            if (userName == null) throw new Exception("Not found this User");
-            UserAccount? userLogin = await _userManager.FindByNameAsync(userName);
+            string? userId = _userManager.GetUserId(user);
+            if (userId == null) throw new Exception("Not found this User");
+            UserAccount? userLogin = await _userManager.FindByIdAsync(userId);
             if (userLogin == null) throw new Exception("Not found this User");
 
             return userLogin;
@@ -32,6 +32,22 @@ namespace Civil_Registration_System_Platform.GlobalServices.GlobalClass
             if (!await _userManager.IsInRoleAsync(userLogin, "Admin"))
                 throw new Exception("you are not an admin");
             return true;
+        }
+
+        public async Task<bool> CheckIfCanReviewAccounts()
+        {
+            UserAccount userLogin = await GetUser();
+            var isAdmin = await _userManager.IsInRoleAsync(userLogin, "Admin");
+            var isReviewer = await _userManager.IsInRoleAsync(userLogin, "AccountReviewer");
+            if (!isAdmin && !isReviewer)
+                throw new Exception("you cannot review citizen accounts");
+            return true;
+        }
+
+        public async Task<bool> IsAccountReviewer()
+        {
+            UserAccount userLogin = await GetUser();
+            return await _userManager.IsInRoleAsync(userLogin, "AccountReviewer");
         }
     }
 }

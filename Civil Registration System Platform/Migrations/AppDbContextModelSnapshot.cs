@@ -1828,6 +1828,160 @@ namespace Civil_Registration_System_Platform.Migrations
                     b.HasKey("ServicesTypeEnum", "ApplicationTypeEnum");
 
                     b.ToTable("ServicesTypeHelpers");
+
+                    b.HasData(
+                        new
+                        {
+                            ServicesTypeEnum = 1,
+                            ApplicationTypeEnum = 1,
+                            Details = "الرقم القومي|اسم الأم الثلاثي",
+                            DurationInDays = 0,
+                            Price = 63
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 1,
+                            ApplicationTypeEnum = 6,
+                            Details = "إشعار ولادة من المستشفى|بطاقة ولي الأمر",
+                            DurationInDays = 0,
+                            Price = 0
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 2,
+                            ApplicationTypeEnum = 1,
+                            Details = "تقرير طبي|إشعار الوفاة من المستشفى",
+                            DurationInDays = 1,
+                            Price = 63
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 3,
+                            ApplicationTypeEnum = 1,
+                            Details = "بيانات الزوج والزوجة (ثلاثي-رباعي)|تاريخ الزواج",
+                            DurationInDays = 1,
+                            Price = 63
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 4,
+                            ApplicationTypeEnum = 1,
+                            Details = "بيانات الزوج والزوجة|تاريخ الطلاق",
+                            DurationInDays = 1,
+                            Price = 63
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 5,
+                            ApplicationTypeEnum = 1,
+                            Details = "شهادة ميلاد مميكنة|عدد 2 صورة شخصية|قيد عائلي أو إثبات إقامة",
+                            DurationInDays = 7,
+                            Price = 75
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 5,
+                            ApplicationTypeEnum = 2,
+                            Details = "البطاقة القديمة|عدد 2 صورة شخصية",
+                            DurationInDays = 7,
+                            Price = 75
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 5,
+                            ApplicationTypeEnum = 3,
+                            Details = "محضر فقدان|عدد 2 صورة شخصية",
+                            DurationInDays = 7,
+                            Price = 315
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 5,
+                            ApplicationTypeEnum = 4,
+                            Details = "البطاقة التالفة|عدد 2 صورة شخصية",
+                            DurationInDays = 7,
+                            Price = 265
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 6,
+                            ApplicationTypeEnum = 1,
+                            Details = "بطاقة قومي سارية|عدد 4 صور شخصية|شهادة موقف التجنيد (للذكور)",
+                            DurationInDays = 7,
+                            Price = 500
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 6,
+                            ApplicationTypeEnum = 2,
+                            Details = "الجواز القديم|بطاقة قومي سارية|عدد 4 صور شخصية",
+                            DurationInDays = 7,
+                            Price = 500
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 6,
+                            ApplicationTypeEnum = 3,
+                            Details = "محضر فقدان|بطاقة قومي سارية|عدد 4 صور شخصية|شهادة موقف التجنيد (للذكور)",
+                            DurationInDays = 7,
+                            Price = 600
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 6,
+                            ApplicationTypeEnum = 4,
+                            Details = "الجواز التالف|بطاقة قومي سارية",
+                            DurationInDays = 7,
+                            Price = 500
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 8,
+                            ApplicationTypeEnum = 1,
+                            Details = "الرقم القومي|اسم رب الأسرة",
+                            DurationInDays = 1,
+                            Price = 63
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 9,
+                            ApplicationTypeEnum = 1,
+                            Details = "الرقم القومي",
+                            DurationInDays = 1,
+                            Price = 63
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 10,
+                            ApplicationTypeEnum = 1,
+                            Details = "بطاقة قومي + مؤهل دراسي|عدد 2 صورة شخصية|إثبات إقامة",
+                            DurationInDays = 14,
+                            Price = 1140
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 10,
+                            ApplicationTypeEnum = 2,
+                            Details = "الرخصة القديمة|شهادة براءة ذمة",
+                            DurationInDays = 14,
+                            Price = 1105
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 10,
+                            ApplicationTypeEnum = 3,
+                            Details = "بطاقة قومي|محضر فقدان|شهادة براءة ذمة",
+                            DurationInDays = 14,
+                            Price = 265
+                        },
+                        new
+                        {
+                            ServicesTypeEnum = 10,
+                            ApplicationTypeEnum = 4,
+                            Details = "بطاقة قومي|الرخصة التالفة|شهادة براءة ذمة",
+                            DurationInDays = 14,
+                            Price = 215
+                        });
                 });
 
             modelBuilder.Entity("Civil_Registration_System_Platform.Models.TimelineEntry", b =>
@@ -2008,8 +2162,8 @@ namespace Civil_Registration_System_Platform.Migrations
                             Id = "1",
                             AccessFailedCount = 0,
                             CardImagePath = "default.png",
-                            ConcurrencyStamp = "ac5b3c18-8aec-40d6-901a-82e68068cd7f",
-                            CreatedAt = new DateOnly(2026, 5, 4),
+                            ConcurrencyStamp = "f13a3b84-e88b-4dd0-b75d-1964737a49bb",
+                            CreatedAt = new DateOnly(2026, 5, 5),
                             EGPhoneNumber = "01000000000",
                             Email = "superadmin@gmail.com",
                             EmailConfirmed = true,
@@ -2022,9 +2176,9 @@ namespace Civil_Registration_System_Platform.Migrations
                             NationalID = "12345678901234",
                             NormalizedEmail = "SUPERADMIN@GMAIL.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOsudK2uBaLtJnKBFD+PVJsFjdufs5YVvNjvIllk0XyFblW17Q49cpT6pgpY3npRCw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOzJeOGCPuekLOZZuOQE66ZQXtsAvTepo4fe+p5b4XNDj0JYg5vYjriRK+jdor/2EA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ced70ac6-1303-4238-b766-e20854888a73",
+                            SecurityStamp = "efed3c4a-84aa-4616-9302-ba4898560034",
                             TwoFactorEnabled = false,
                             UserName = "superadmin"
                         });

@@ -1,0 +1,33 @@
+@*
+    Partial: زر العودة للوحة التحكم — يحدد الوجهة حسب دور المستخدم
+    الاستخدام:  @await Html.PartialAsync("_DashboardBreadcrumb")
+*@
+@{
+    string controller, action, label;
+    if (User.IsInRole("SuperAdmin"))
+    {
+        controller = "SuperAdmin"; action = "Index"; label = "لوحة السوبر أدمن";
+    }
+    else if (User.IsInRole("AccountReviewer"))
+    {
+        controller = "Admin"; action = "UnconfirmedUsers"; label = "مراجعة الحسابات";
+    }
+    else if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+    {
+        controller = "Admin"; action = "Index"; label = "لوحة التحكم";
+    }
+    else if (User.IsInRole("User"))
+    {
+        controller = "Dashboard"; action = "Index"; label = "لوحتي";
+    }
+    else
+    {
+        controller = "Home"; action = "Index"; label = "الرئيسية";
+    }
+}
+
+<div class="container pt-3">
+    <a asp-controller="@controller" asp-action="@action" class="btn btn-gov-outline btn-sm">
+        <i class="bi bi-arrow-right ms-1"></i> العودة إلى @label
+    </a>
+</div>

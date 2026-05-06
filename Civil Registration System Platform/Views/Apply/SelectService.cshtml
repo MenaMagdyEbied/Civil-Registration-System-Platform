@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "اختر الخدمة";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="section-title mb-5">
+            <div class="title-line"></div>
+            <h2>اختر الخدمة المطلوبة</h2>
+            <p>اختر الخدمة التي ترغب في تقديم طلب لها</p>
+        </div>
+
+        <div class="row g-4">
+            @{
+                var services = new[]
+                {
+                    new { Id = (int)ServiceType.BirthCertificate,    Name = "شهادة الميلاد",     Icon = "bi-file-earmark-medical", Color = "color-birth" },
+                    new { Id = (int)ServiceType.DeathCertificate,    Name = "شهادة الوفاة",      Icon = "bi-file-earmark-minus",   Color = "color-death" },
+                    new { Id = (int)ServiceType.NationalId,          Name = "بطاقة الرقم القومي", Icon = "bi-person-badge",        Color = "color-nationalid" },
+                    new { Id = (int)ServiceType.Passport,            Name = "جواز السفر",        Icon = "bi-airplane",             Color = "color-passport" },
+                    new { Id = (int)ServiceType.DriversLicense,      Name = "رخصة القيادة",      Icon = "bi-car-front",            Color = "color-license" },
+                    new { Id = (int)ServiceType.MarriageCertificate, Name = "قسيمة الزواج",      Icon = "bi-heart",                Color = "color-marriage" },
+                    new { Id = (int)ServiceType.DivorceCertificate,  Name = "قسيمة الطلاق",      Icon = "bi-scissors",             Color = "color-divorce" },
+                    new { Id = (int)ServiceType.FamilyCard,          Name = "قيد عائلي",         Icon = "bi-people",               Color = "color-family" },
+                    new { Id = (int)ServiceType.IndividualRecord,    Name = "قيد فردي",          Icon = "bi-person-lines-fill",    Color = "color-individual" }
+                };
+            }
+
+            @foreach (var s in services)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card text-center">
+                        <div class="card-icon mx-auto @s.Color"><i class="bi @s.Icon"></i></div>
+                        <h5>@s.Name</h5>
+                        <a asp-controller="Apply" asp-action="Index" asp-route-serviceType="@s.Id" class="btn btn-gov-gold w-100 mt-3">
+                            <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

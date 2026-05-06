@@ -8,7 +8,7 @@ namespace Civil_Registration_System_Platform.Account.AccountViewModel
         public string FullName { get; set; }
 
         [StringLength(11, MinimumLength = 11)]
-        [RegularExpression(@"^01[0-2,5][0-9]{8}$", ErrorMessage = "Invalid Egyptian phone number")]
+        [RegularExpression(@"^01[0-2,5][0-9]{8}$", ErrorMessage = "رقم الموبايل المصري غير صحيح")]
         public string EGPhoneNumber { get; set; }
 
         [StringLength(14, MinimumLength = 14)]
@@ -17,7 +17,8 @@ namespace Civil_Registration_System_Platform.Account.AccountViewModel
         public int MaritalStatus { get; set; } // enum
         public IFormFile CardImage { get; set; }
 
-        [StringLength(4, MinimumLength = 4)]
+        [MinLength(4, ErrorMessage = "اسم المستخدم يجب ألا يقل عن 4 أحرف")]
+        [StringLength(50, ErrorMessage = "اسم المستخدم يجب ألا يزيد عن 50 حرفاً")]
         public string UserName { get; set; }
         [EmailAddress]
         public string Email { get; set; }
