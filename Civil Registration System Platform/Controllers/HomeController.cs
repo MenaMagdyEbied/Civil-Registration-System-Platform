@@ -34,7 +34,11 @@ namespace Civil_Registration_System_Platform.Controllers
         {
             var vm = new TrackVM { ApplicationNumber = id ?? string.Empty };
             return View(vm);
+
+        }
+=======
             return View(new Civil_Registration_System_Platform.ViewModel.Application.TrackVM());        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -59,7 +63,7 @@ namespace Civil_Registration_System_Platform.Controllers
             {
                 TempData["ErrorMessage"] = "حدث خطأ أثناء البحث. حاول مرة أخرى.";
             }
-=======
+
         public async Task<IActionResult> Track(TrackVM model)
         {
             if (!ModelState.IsValid)
