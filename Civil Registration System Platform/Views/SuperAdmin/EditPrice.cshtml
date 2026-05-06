@@ -1,5 +1,60 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model PricingFormVM
 @{
+    ViewData["Title"] = "تعديل سعر";
 }
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+                <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:20px;">
+                    <i class="bi bi-pencil-square ms-2" style="color:var(--gov-secondary);"></i> تعديل السعر
+                </h4>
+
+                <div class="alert alert-gov-info">
+                    <i class="bi bi-info-circle ms-2"></i>
+                    تعديل: <strong>@Model.ServiceType.ToArabicName()</strong> — <strong>@Model.ApplicationType.ToArabicName()</strong>
+                </div>
+
+                <form asp-action="SavePrice" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-gov-danger" style="display:@(ViewData.ModelState.ErrorCount > 0 ? "block" : "none");"></div>
+
+                    <input asp-for="ServiceType" type="hidden">
+                    <input asp-for="ApplicationType" type="hidden">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Price" class="form-label fw-semibold">السعر (ج.م) <span class="text-danger">*</span></label>
+                            <input asp-for="Price" type="number" min="0" class="form-control">
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DurationInDays" class="form-label fw-semibold">المدة (بالأيام) <span class="text-danger">*</span></label>
+                            <input asp-for="DurationInDays" type="number" min="0" max="365" class="form-control">
+                            <span asp-validation-for="DurationInDays" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Details" class="form-label fw-semibold">المستندات المطلوبة</label>
+                            <textarea asp-for="Details" class="form-control" rows="4"></textarea>
+                            <small class="text-muted">افصل بين كل مستند والآخر بـ | أو سطر جديد</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4 pt-3" style="border-top:1px solid var(--gov-border);">
+                        <a asp-action="Pricing" class="btn btn-gov-outline">
+                            <i class="bi bi-arrow-right ms-1"></i> إلغاء
+                        </a>
+                        <button type="submit" class="btn btn-gov-gold">
+                            <i class="bi bi-save ms-1"></i> حفظ التعديل
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
