@@ -23,9 +23,7 @@ namespace Civil_Registration_System_Platform.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-<<<<<<< Updated upstream
             return View();
-=======
             var vm = await _homePageService.GetHomePageDataAsync();
             return View(vm);
         }
@@ -36,12 +34,10 @@ namespace Civil_Registration_System_Platform.Controllers
         {
             var vm = new TrackVM { ApplicationNumber = id ?? string.Empty };
             return View(vm);
->>>>>>> Stashed changes
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-<<<<<<< Updated upstream
         public async Task<IActionResult> Track(string applicationNumber)
         {
             if (string.IsNullOrWhiteSpace(applicationNumber))
@@ -67,7 +63,7 @@ namespace Civil_Registration_System_Platform.Controllers
                 TempData["ErrorMessage"] = "حدث خطأ أثناء البحث. حاول مرة أخرى.";
                 return View();
             }
-=======
+
         public async Task<IActionResult> Track(TrackVM model)
         {
             if (!ModelState.IsValid)
@@ -85,7 +81,6 @@ namespace Civil_Registration_System_Platform.Controllers
 
             model.Result = result;
             return View(model);
->>>>>>> Stashed changes
         }
 
 
