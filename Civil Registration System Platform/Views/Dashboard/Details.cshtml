@@ -1,0 +1,123 @@
+@model ApplicationTrackResultVM
+@{
+    ViewData["Title"] = "تفاصيل الطلب";
+    var needsExtraDocs = Model.StatusName == ApplicationStatus.AdditionalInfoRequired.ToArabicName();
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="bg-white rounded-3 shadow-sm p-4 mb-3" style="border:1px solid var(--gov-border);">
+        <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
+            <div>
+                <h4 style="font-weight:800;color:var(--gov-primary);margin-bottom:5px;">@Model.ServiceTypeName</h4>
+                <div style="font-size:0.9rem;color:var(--gov-text-light);">
+                    رقم الطلب: <span style="color:var(--gov-secondary);font-weight:700;" dir="ltr">@Model.ApplicationNumber</span>
+                </div>
+            </div>
+            <div>
+                <span style="background:@Model.StatusColor;color:#fff;padding:8px 16px;border-radius:20px;font-weight:600;font-size:0.9rem;">
+                    @Model.StatusName
+                </span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3 mb-2"><strong>نوع الطلب:</strong> @Model.ApplicationTypeName</div>
+            <div class="col-md-3 mb-2"><strong>مكتب التقديم:</strong> @Model.OfficeName</div>
+            <div class="col-md-3 mb-2">
+                <strong>مكتب الاستلام:</strong>
+                @(string.IsNullOrEmpty(Model.DeliveryOfficeName) ? Model.OfficeName : Model.DeliveryOfficeName)
+            </div>
+            <div class="col-md-3 mb-2"><strong>الرسوم:</strong> <span style="color:var(--gov-secondary);font-weight:700;">@Model.Price ج.م</span></div>
+            <div class="col-md-3 mb-2"><strong>تاريخ التقديم:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd")</div>
+        </div>
+
+        @if (needsExtraDocs)
+        {
+            <div class="alert alert-gov-warning mb-3">
+                <i class="bi bi-exclamation-triangle ms-2"></i>
+                <strong>الأدمن طلب مستندات إضافية.</strong>
+                ارفعها من النموذج أدناه ليتم استكمال مراجعة طلبك.
+            </div>
+        }
+
+        @if (Model.StatusName == ApplicationStatus.Submitted.ToArabicName()
+          || Model.StatusName == ApplicationStatus.UnderReview.ToArabicName()
+          || Model.StatusName == ApplicationStatus.AdditionalInfoRequired.ToArabicName())
+        {
+            <form asp-controller="Dashboard" asp-action="Cancel" method="post" class="d-inline-block">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@(ViewContext.RouteData.Values["id"])">
+                <button type="submit" class="btn btn-gov-outline btn-sm" onclick="return confirm('هل أنت متأكد من إلغاء الطلب؟');">
+                    <i class="bi bi-x-circle ms-1"></i> إلغاء الطلب
+                </button>
+            </form>
+        }
+    </div>
+
+    @if (needsExtraDocs)
+    {
+        <!-- Upload additional docs -->
+        <div class="bg-white rounded-3 shadow-sm p-4 mb-3" style="border:1px solid var(--gov-border);">
+            <h5 style="font-weight:700;color:var(--gov-primary);margin-bottom:15px;">
+                <i class="bi bi-cloud-arrow-up ms-2" style="color:var(--gov-secondary);"></i> رفع مستندات إضافية
+            </h5>
+
+            <form asp-controller="Apply" asp-action="RespondToAdditionalInfo" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="applicationId" value="@(ViewContext.RouteData.Values["id"])">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">المستندات (يمكن اختيار عدة ملفات)</label>
+                    <input type="file" class="form-control" name="additionalDocs" multiple accept=".pdf,.jpg,.jpeg,.png">
+                    <small class="text-muted">PDF/JPG/PNG — حد أقصى 5MB لكل ملف</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">ملاحظة (اختيارية)</label>
+                    <textarea name="note" class="form-control" rows="2" maxlength="300"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-gov-gold">
+                    <i class="bi bi-send ms-1"></i> إرسال المستندات
+                </button>
+            </form>
+        </div>
+    }
+
+    <!-- Timeline -->
+    <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+        <h5 style="font-weight:700;color:var(--gov-primary);margin-bottom:20px;">
+            <i class="bi bi-clock-history ms-2" style="color:var(--gov-secondary);"></i> سجل الطلب
+        </h5>
+
+        @if (Model.Timeline != null && Model.Timeline.Any())
+        {
+            <div style="position:relative;padding-right:30px;border-right:2px solid var(--gov-border);">
+                @foreach (var t in Model.Timeline)
+                {
+                    <div class="mb-3 pb-3" style="border-bottom:1px dashed var(--gov-border);position:relative;">
+                        <div style="position:absolute;right:-39px;top:0;width:14px;height:14px;background:var(--gov-secondary);border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px var(--gov-border);"></div>
+                        <div class="d-flex justify-content-between flex-wrap">
+                            <strong style="color:var(--gov-primary);">@t.StatusName</strong>
+                            <small style="color:var(--gov-text-light);">@t.Timestamp.ToString("yyyy-MM-dd HH:mm")</small>
+                        </div>
+                        @if (!string.IsNullOrEmpty(t.Description))
+                        {
+                            <div style="font-size:0.9rem;color:var(--gov-text);">@t.Description</div>
+                        }
+                        @if (!string.IsNullOrEmpty(t.PerformedByName))
+                        {
+                            <div style="font-size:0.8rem;color:var(--gov-text-light);">بواسطة: @t.PerformedByName</div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">لا توجد إدخالات في سجل الطلب بعد.</p>
+        }
+    </div>
+</main>
