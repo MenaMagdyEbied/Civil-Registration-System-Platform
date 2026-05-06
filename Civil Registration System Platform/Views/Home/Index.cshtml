@@ -1,8 +1,483 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@{
+    Layout = "~/Views/Layouts/MainLayout.cshtml";
+}
+@section TopNav {
+    <div class="gov-topbar d-none d-md-block">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+                <div class="d-flex gap-4 align-items-center">
+                    <a href="tel:15444"><i class="bi bi-telephone-fill me-1"></i> 15444</a>
+                    <a href="mailto:support@crs.gov.eg"><i class="bi bi-envelope-fill me-1"></i> support@crs.gov.eg</a>
+                    <span><i class="bi bi-geo-alt-fill me-1"></i> القاهرة، مصر</span>
+                </div>
+
+                <div class="d-flex gap-3 align-items-center">
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                    <span class="mx-2" style="color:rgba(255,255,255,0.2);">|</span>
+                    <a asp-controller="Home" asp-action="Index" asp-route-lang="en" style="font-weight:600;">English</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+<section class="gov-hero" id="home">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+
+                <div class="hero-badge">
+                    🛡️ منصة رسمية تابعة لوزارة الداخلية
+                </div>
+
+                <h1>
+                    نظام التسجيل المدني
+                    <br>
+                    <span>رقمنة الخدمات الحكومية</span>
+                </h1>
+
+                <p>
+                    منصة إلكترونية موحدة تمكن المواطنين من التقديم على جميع خدمات الأحوال المدنية
+                    والهوية والجوازات ورخص القيادة أونلاين
+                </p>
+
+                <div class="d-flex gap-3 mt-4 flex-wrap">
+                    <a asp-controller="Home" asp-action="Index" asp-fragment="services" class="btn btn-gov-gold">
+                        <i class="bi bi-grid me-2"></i> تصفح الخدمات
+                    </a>
+                    <a asp-controller="Track" asp-action="Index" class="btn btn-gov-outline" style="border-radius:10px;">
+                        <i class="bi bi-search me-2"></i> تتبع طلبك
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <h3>9+</h3>
+                        <p>خدمات</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>27</h3>
+                        <p>محافظة</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>+50,000</h3>
+                        <p>طلب شهرياً</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ===== QUICK SERVICES BAR ===== *@
+<div class="quick-services-bar">
+    <div class="container">
+        <div class="row text-center g-2">
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="birth" class="quick-service-item">
+                    <div class="quick-service-icon color-birth"><i class="bi bi-file-earmark-medical"></i></div>
+                    <span>شهادة الميلاد</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="nationalid" class="quick-service-item">
+                    <div class="quick-service-icon color-nationalid"><i class="bi bi-person-badge"></i></div>
+                    <span>بطاقة الرقم القومي</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="passport" class="quick-service-item">
+                    <div class="quick-service-icon color-passport"><i class="bi bi-airplane"></i></div>
+                    <span>جواز السفر</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="license" class="quick-service-item">
+                    <div class="quick-service-icon color-license"><i class="bi bi-car-front"></i></div>
+                    <span>رخصة القيادة</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="marriage" class="quick-service-item">
+                    <div class="quick-service-icon color-marriage"><i class="bi bi-heart"></i></div>
+                    <span>قسيمة الزواج</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="divorce" class="quick-service-item">
+                    <div class="quick-service-icon color-divorce"><i class="bi bi-scissors"></i></div>
+                    <span>قسيمة الطلاق</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="family" class="quick-service-item">
+                    <div class="quick-service-icon color-family"><i class="bi bi-people"></i></div>
+                    <span>قيد عائلي</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="individual" class="quick-service-item">
+                    <div class="quick-service-icon color-individual"><i class="bi bi-person-lines-fill"></i></div>
+                    <span>قيد فردي</span>
+                </a>
+            </div>
+            <div class="col">
+                <a asp-controller="Apply" asp-action="Index" asp-route-service="death" class="quick-service-item">
+                    <div class="quick-service-icon color-death"><i class="bi bi-file-earmark-minus"></i></div>
+                    <span>شهادة الوفاة</span>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+
+@* ===== SERVICES SECTION ===== *@
+<section class="py-5" id="services">
+    <div class="container">
+        <div class="section-title fade-up">
+            <h2>خدماتنا</h2>
+            <div class="title-line"></div>
+            <p>جميع خدمات الأحوال المدنية والهوية والجوازات ورخص القيادة في مكان واحد</p>
+        </div>
+
+        <div class="text-center mb-4 fade-up">
+            <div class="btn-group" role="group" aria-label="تصفية الخدمات">
+                <button type="button" class="btn btn-gov-primary btn-sm active" data-filter="all">الكل</button>
+                <button type="button" class="btn btn-gov-primary btn-sm" data-filter="civil">أحوال مدنية</button>
+                <button type="button" class="btn btn-gov-primary btn-sm" data-filter="identity">الهوية</button>
+                <button type="button" class="btn btn-gov-primary btn-sm" data-filter="travel">الجوازات والمرور</button>
+            </div>
+        </div>
+
+        <div class="row g-4" id="serviceCards">
+
+            @* 1. شهادة الميلاد *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="civil">
+                <div class="service-card">
+                    <div class="color-birth-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-birth"><i class="bi bi-file-earmark-medical"></i></div>
+                    <h5>شهادة الميلاد</h5>
+                    <p>إصدار شهادة ميلاد مميكنة</p>
+                    <div class="card-meta">
+                        <span class="price">63 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> فوري</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="birth" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+            @* 2. شهادة الوفاة *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="civil">
+                <div class="service-card">
+                    <div class="color-death-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-death"><i class="bi bi-file-earmark-minus"></i></div>
+                    <h5>شهادة الوفاة</h5>
+                    <p>إصدار شهادة وفاة مميكنة</p>
+                    <div class="card-meta">
+                        <span class="price">63 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> 1-3 أيام</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="death" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+            @* 3. بطاقة الرقم القومي *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="identity">
+                <div class="service-card">
+                    <div class="color-nationalid-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-nationalid"><i class="bi bi-person-badge"></i></div>
+                    <h5>بطاقة الرقم القومي</h5>
+                    <p>استخراج أو تجديد أو بدل فاقد/تالف</p>
+                    <div class="card-meta">
+                        <span class="price">75-315 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> 3-7 أيام</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="nationalid" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+            @* 4. جواز السفر *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="travel">
+                <div class="service-card">
+                    <div class="color-passport-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-passport"><i class="bi bi-airplane"></i></div>
+                    <h5>جواز السفر</h5>
+                    <p>استخراج أو تجديد أو بدل فاقد/تالف</p>
+                    <div class="card-meta">
+                        <span class="price">500-800 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> 3-7 أيام</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="passport" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+            @* 5. رخصة القيادة *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="travel">
+                <div class="service-card">
+                    <div class="color-license-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-license"><i class="bi bi-car-front"></i></div>
+                    <h5>رخصة القيادة</h5>
+                    <p>استخراج أو تجديد أو بدل فاقد/تالف</p>
+                    <div class="card-meta">
+                        <span class="price">265-1,140 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> 7-14 يوم</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="license" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+            @* 6. قسيمة الزواج *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="civil">
+                <div class="service-card">
+                    <div class="color-marriage-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-marriage"><i class="bi bi-heart"></i></div>
+                    <h5>قسيمة الزواج</h5>
+                    <p>إصدار قسيمة زواج مميكنة</p>
+                    <div class="card-meta">
+                        <span class="price">63 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> 1-3 أيام</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="marriage" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+            @* 7. قسيمة الطلاق *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="civil">
+                <div class="service-card">
+                    <div class="color-divorce-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-divorce"><i class="bi bi-scissors"></i></div>
+                    <h5>قسيمة الطلاق</h5>
+                    <p>إصدار قسيمة طلاق مميكنة</p>
+                    <div class="card-meta">
+                        <span class="price">63 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> 1-3 أيام</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="divorce" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+            @* 8. قيد عائلي *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="civil">
+                <div class="service-card">
+                    <div class="color-family-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-family"><i class="bi bi-people"></i></div>
+                    <h5>قيد عائلي</h5>
+                    <p>صورة قيد عائلي</p>
+                    <div class="card-meta">
+                        <span class="price">63 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> 1-3 أيام</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="family" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+            @* 9. قيد فردي *@
+            <div class="col-md-6 col-lg-4 fade-up" data-category="identity">
+                <div class="service-card">
+                    <div class="color-individual-border" style="position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 16px 16px 0;"></div>
+                    <div class="card-icon color-individual"><i class="bi bi-person-lines-fill"></i></div>
+                    <h5>قيد فردي</h5>
+                    <p>صورة قيد فردي</p>
+                    <div class="card-meta">
+                        <span class="price">63 ج.م</span>
+                        <span class="time"><i class="bi bi-clock me-1"></i> 1-3 أيام</span>
+                    </div>
+                    <a asp-controller="Apply" asp-action="Index" asp-route-service="individual" class="btn btn-gov-primary btn-sm mt-3 w-100">
+                        <i class="bi bi-arrow-left me-1"></i> تقديم طلب
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@* ===== FEES SECTION ===== *@
+<section class="py-5 bg-white" id="fees">
+    <div class="container">
+        <div class="section-title fade-up">
+            <h2>جدول الرسوم</h2>
+            <div class="title-line"></div>
+            <p>تعرف على الرسوم المقررة لكل خدمة من خدمات التسجيل المدني</p>
+        </div>
+
+        <div class="fade-up">
+            <div class="table-responsive">
+                <table class="fee-table">
+                    <thead>
+                        <tr>
+                            <th>الخدمة</th>
+                            <th>نوع الطلب</th>
+                            <th>الرسوم</th>
+                            <th>المدة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="2"><i class="bi bi-file-earmark-medical me-2" style="color:#2e7d32;"></i>شهادة الميلاد</td>
+                            <td>مستخرج شهادة ميلاد</td>
+                            <td>63 ج.م</td>
+                            <td>فوري</td>
+                        </tr>
+                        <tr><td>تسجيل ميلاد جديد</td><td>مجاناً</td><td>فوري</td></tr>
+                        <tr>
+                            <td><i class="bi bi-file-earmark-minus me-2" style="color:#c62828;"></i>شهادة الوفاة</td>
+                            <td>إصدار شهادة وفاة مميكنة</td>
+                            <td>63 ج.م</td>
+                            <td>1-3 أيام</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="4"><i class="bi bi-person-badge me-2" style="color:#1565c0;"></i>بطاقة الرقم القومي</td>
+                            <td>أول مرة (سن 16)</td>
+                            <td>75 ج.م</td>
+                            <td>3-7 أيام</td>
+                        </tr>
+                        <tr><td>تجديد</td><td>75 ج.م</td><td>3-7 أيام</td></tr>
+                        <tr><td>بدل فاقد</td><td>315 ج.م</td><td>3-7 أيام</td></tr>
+                        <tr><td>بدل تالف</td><td>265 ج.م</td><td>3-7 أيام</td></tr>
+                        <tr>
+                            <td rowspan="4"><i class="bi bi-airplane me-2" style="color:#e65100;"></i>جواز السفر</td>
+                            <td>أول مرة</td>
+                            <td>500 ج.م</td>
+                            <td>3-7 أيام</td>
+                        </tr>
+                        <tr><td>تجديد</td><td>500 ج.م</td><td>3-7 أيام</td></tr>
+                        <tr><td>بدل فاقد</td><td>600 ج.م</td><td>3-7 أيام</td></tr>
+                        <tr><td>بدل تالف</td><td>500 ج.م</td><td>3-7 أيام</td></tr>
+                        <tr>
+                            <td rowspan="4"><i class="bi bi-car-front me-2" style="color:#7b1fa2;"></i>رخصة القيادة</td>
+                            <td>أول مرة (خاصة)</td>
+                            <td>1,140 ج.م</td>
+                            <td>7-14 يوم</td>
+                        </tr>
+                        <tr><td>تجديد</td><td>1,105 ج.م</td><td>7-14 يوم</td></tr>
+                        <tr><td>بدل فاقد</td><td>265 ج.م</td><td>7-14 يوم</td></tr>
+                        <tr><td>بدل تالف</td><td>215 ج.م</td><td>7-14 يوم</td></tr>
+                        <tr>
+                            <td><i class="bi bi-heart me-2" style="color:#ad1457;"></i>قسيمة الزواج</td>
+                            <td>مستخرج قسيمة زواج</td>
+                            <td>63 ج.م</td>
+                            <td>1-3 أيام</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-scissors me-2" style="color:#4e342e;"></i>قسيمة الطلاق</td>
+                            <td>مستخرج قسيمة طلاق</td>
+                            <td>63 ج.م</td>
+                            <td>1-3 أيام</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-people me-2" style="color:#00695c;"></i>قيد عائلي</td>
+                            <td>مستخرج قيد عائلي</td>
+                            <td>63 ج.م</td>
+                            <td>1-3 أيام</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-person-lines-fill me-2" style="color:#283593;"></i>قيد فردي</td>
+                            <td>مستخرج قيد فردي</td>
+                            <td>63 ج.م</td>
+                            <td>1-3 أيام</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ===== HOW IT WORKS SECTION ===== *@
+<section class="gov-steps" id="how-it-works">
+    <div class="container">
+        <div class="section-title fade-up">
+            <h2>كيف تقدم طلبك</h2>
+            <div class="title-line"></div>
+            <p>أربع خطوات بسيطة للحصول على الخدمة المطلوبة</p>
+        </div>
+        <div class="row">
+            <div class="col-md-3 fade-up">
+                <div class="step-item">
+                    <div class="step-number"><i class="bi bi-hand-index"></i></div>
+                    <h5>اختيار الخدمة</h5>
+                    <p>اختر الخدمة المطلوبة من قائمة الخدمات المتاحة</p>
+                    <div class="step-connector"></div>
+                </div>
+            </div>
+            <div class="col-md-3 fade-up">
+                <div class="step-item">
+                    <div class="step-number"><i class="bi bi-pencil-square"></i></div>
+                    <h5>تعبئة البيانات</h5>
+                    <p>أدخل بياناتك الشخصية ومعلومات الطلب المطلوب</p>
+                    <div class="step-connector"></div>
+                </div>
+            </div>
+            <div class="col-md-3 fade-up">
+                <div class="step-item">
+                    <div class="step-number"><i class="bi bi-credit-card"></i></div>
+                    <h5>رفع المستندات ودفع الرسوم</h5>
+                    <p>ارفع المستندات المطلوبة وقم بسداد الرسوم المقررة</p>
+                    <div class="step-connector"></div>
+                </div>
+            </div>
+            <div class="col-md-3 fade-up">
+                <div class="step-item">
+                    <div class="step-number"><i class="bi bi-check-circle"></i></div>
+                    <h5>استلام الخدمة</h5>
+                    <p>استلم الخدمة إلكترونياً أو من أقرب مكتب تسجيل مدني</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ===== TRACK SECTION ===== *@
+<section class="track-section" id="track">
+    <div class="container">
+        <div class="text-center mb-4 fade-up">
+            <h2 style="font-weight:800;color:#fff;">تتبع طلبك</h2>
+            <p style="color:rgba(255,255,255,0.6);">أدخل رقم الطلب لمعرفة حالة المعاملة</p>
+        </div>
+        <div class="track-card fade-up">
+            <div class="text-center mb-3">
+                <i class="bi bi-search" style="font-size:2.5rem;color:var(--gov-secondary);"></i>
+            </div>
+            <form asp-controller="Home" asp-action="Track" method="post">
+    
+                <div class="mb-3">
+                    <input type="text" name="applicationNumber" id="trackInput"
+                           class="form-control"
+                           placeholder="أدخل رقم الطلب - مثال: CRS-2025-0042"
+                           dir="ltr" style="text-align:center;">
+                </div>
+
+                <button type="submit" class="btn btn-gov-gold w-100">
+                    <i class="bi bi-search me-2"></i> تتبع الطلب
+                </button>
+
+                @Html.AntiForgeryToken()
+
+            </form>
+    </div>
+</section>
