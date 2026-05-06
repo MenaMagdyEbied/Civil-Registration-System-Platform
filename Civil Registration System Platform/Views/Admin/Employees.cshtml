@@ -1,0 +1,63 @@
+@model IEnumerable<EmployeeListItemVM>
+@{
+    ViewData["Title"] = "الموظفين";
+}
+
+@await Html.PartialAsync("_DashboardBreadcrumb")
+
+<main class="container py-4">
+    <div class="bg-white rounded-3 shadow-sm p-4" style="border:1px solid var(--gov-border);">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h4 style="font-weight:800;color:var(--gov-primary);margin:0;">
+                <i class="bi bi-people ms-2" style="color:var(--gov-secondary);"></i> موظفو المكتب
+            </h4>
+            <a asp-action="CreateEmployee" class="btn btn-gov-gold btn-sm">
+                <i class="bi bi-person-plus ms-1"></i> إضافة موظف
+            </a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-person-plus" style="font-size:3rem;color:var(--gov-text-light);"></i>
+                <p style="color:var(--gov-text-light);margin-top:10px;">لا يوجد موظفين بعد</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="fee-table">
+                    <thead>
+                        <tr><th>الاسم</th><th>البريد</th><th>الموبايل</th><th>الرقم القومي</th><th>الحالة</th><th>إجراء</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in Model)
+                        {
+                            <tr>
+                                <td style="font-weight:600;">@e.FullName</td>
+                                <td dir="ltr">@e.Email</td>
+                                <td dir="ltr">@e.EGPhoneNumber</td>
+                                <td dir="ltr">@e.NationalID</td>
+                                <td>
+                                    @if (e.IsActive)
+                                    { <span class="badge-gov-success">نشط</span> }
+                                    else
+                                    { <span class="badge-gov-danger">معطّل</span> }
+                                </td>
+                                <td>
+                                    <form asp-action="ToggleEmployee" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="employeeId" value="@e.EmployeeId">
+                                        <button type="submit" class="btn btn-gov-outline btn-sm" style="padding:4px 12px;font-size:0.8rem;">
+                                            @(e.IsActive ? "تعطيل" : "تفعيل")
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</main>

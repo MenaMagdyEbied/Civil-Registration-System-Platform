@@ -1,5 +1,6 @@
 
 using Civil_Registration_System_Platform.Services.Interfaces;
+using Civil_Registration_System_Platform.ViewModel.Application;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,27 +8,41 @@ namespace Civil_Registration_System_Platform.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IHomePageService _homePageService;
         private readonly IApplicationService _applicationService;
 
-        public HomeController(IApplicationService applicationService)
+        public HomeController(
+            IHomePageService homePageService,
+            IApplicationService applicationService)
         {
+            _homePageService = homePageService;
             _applicationService = applicationService;
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         [HttpGet]
-        public IActionResult Track()
+        public async Task<IActionResult> Index()
         {
-            return View(new Civil_Registration_System_Platform.ViewModel.Application.TrackVM());
+            return View();
+            var vm = await _homePageService.GetHomePageDataAsync();
+            return View(vm);
         }
+
+
+        [HttpGet]
+        public IActionResult Track(string? id = null)
+        {
+            var vm = new TrackVM { ApplicationNumber = id ?? string.Empty };
+            return View(vm);
+
+        }
+=======
+            return View(new Civil_Registration_System_Platform.ViewModel.Application.TrackVM());        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Track(string applicationNumber)
         public async Task<IActionResult> Track(Civil_Registration_System_Platform.ViewModel.Application.TrackVM model)
         {
             if (model == null || string.IsNullOrWhiteSpace(model.ApplicationNumber))
@@ -49,17 +64,43 @@ namespace Civil_Registration_System_Platform.Controllers
                 TempData["ErrorMessage"] = "حدث خطأ أثناء البحث. حاول مرة أخرى.";
             }
 
+        public async Task<IActionResult> Track(TrackVM model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var result = await _applicationService.TrackApplicationAsync(model.ApplicationNumber);
+
+            if (result == null)
+            {
+                TempData["Error"] = "لم يتم العثور على طلب بهذا الرقم";
+                ModelState.AddModelError(nameof(model.ApplicationNumber),
+                    "لم يتم العثور على طلب بهذا الرقم");
+                return View(model);
+            }
+
+            model.Result = result;
+            return View(model);
+
+
             return View(model);
         }
 
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
-        {
-            return View(new ErrorViewModel
+            => View(new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             });
-        }
-      
     }
+
+
+
+
+
+
+
+
 }
+
